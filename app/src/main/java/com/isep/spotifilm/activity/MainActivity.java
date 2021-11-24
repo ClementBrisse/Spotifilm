@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.MyRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
@@ -35,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     MyRecyclerViewAdapter adapter;
 
+    FloatingActionButton fabAdd;
+    FloatingActionButton fabPlay;
+    FloatingActionButton fabEdit;
+
     List<View> itemViewList = new ArrayList<>();
 
     @Override
@@ -49,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         btnRecentlyPlayed = findViewById(R.id.btnRecentlyPlayed);
         btnAddToLike = findViewById(R.id.btnAddToLike);
+
+        fabAdd = findViewById(R.id.fabAdd);
+        fabPlay = findViewById(R.id.fabPlay);
+        fabEdit = findViewById(R.id.fabEdit);
 
         initBtnListener();
 
@@ -86,6 +95,21 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private void initBtnListener() {
         btnRecentlyPlayed.setOnClickListener(view -> getRecentlyPlayed());
         btnAddToLike.setOnClickListener(view -> putSongLiked());
+        fabAdd.setOnClickListener(view -> addPlaylist());
+        fabPlay.setOnClickListener(view -> playPlaylist());
+        fabEdit.setOnClickListener(view -> editPlaylist());
+    }
+
+    private void editPlaylist() {
+
+    }
+
+    private void playPlaylist() {
+
+    }
+
+    private void addPlaylist() {
+
     }
 
 

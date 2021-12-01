@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     private void addPlaylist() {
         reqService.createNewPlaylist(() -> {
-            //TODO
-            System.out.println("ouvrir page playlist");
+            System.out.println("Playlist : "+reqService.getCreatedPlaylist().getName()+" created");
+            //TODO ouvrir page playlist
         });
 
     }

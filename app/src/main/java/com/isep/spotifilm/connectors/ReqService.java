@@ -23,6 +23,7 @@ import java.util.Map;
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
     private ArrayList<Playlist> playlists = new ArrayList<>();
+    private Playlist createdPlaylist;
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
 
@@ -82,7 +83,7 @@ public class ReqService {
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
-                            Playlist playlist = new Playlist( object.get("id").toString(),  object.get("name").toString());
+                            Playlist playlist = new Playlist( object.getString("id"),  object.getString("name"));
                             playlists.add(playlist);
 
                         } catch (JSONException e) {
@@ -135,6 +136,9 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
+    public  Playlist getCreatedPlaylist(){
+        return createdPlaylist;
+    }
     public void createNewPlaylist(final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/users/49hbxivjgp86e7ncuqy6ry5bs/playlists";
 
@@ -146,8 +150,11 @@ public class ReqService {
         JSONObject parameters = new JSONObject(params);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, endpoint, parameters, response -> {
-                    JSONObject jsonObject = response.optJSONObject("name");
-                    System.out.println(jsonObject);
+                    try {
+                        createdPlaylist = new Playlist(response.getString("name"), response.getString("name"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error

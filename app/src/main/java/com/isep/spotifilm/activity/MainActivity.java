@@ -26,11 +26,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
 
-    private TextView tv;
-
-    private Button btnRecentlyPlayed;
-    private Button btnAddToLike;
-
     private Song song;
 
     private ReqService reqService;
@@ -54,10 +49,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         reqService = new ReqService(getApplicationContext());
 
         TextView userView = findViewById(R.id.user);
-        tv = findViewById(R.id.tv);
-
-        btnRecentlyPlayed = findViewById(R.id.btnRecentlyPlayed);
-        btnAddToLike = findViewById(R.id.btnAddToLike);
 
         fabAdd = findViewById(R.id.fabAdd);
         fabPlay = findViewById(R.id.fabPlay);
@@ -98,21 +89,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         //request to get current user playlist en populate recycler view with it
         reqService.getUserPlaylists(() -> {
             userPlaylist = reqService.getPlaylists();
+            int userPlaylistCount = 0;
             for (Playlist p : userPlaylist) {
                 String playlistName = p.getName();
                 if (playlistName.contains("Spotifilm_")){
                     playlistNames.add(playlistName);
                     adapter.notifyItemInserted(adapter.getItemCount()-1);
+                    userPlaylistCount++;
                 }
-
+            }
+            if(userPlaylistCount == 0){
+                TextView tvNoPlaylist = findViewById(R.id.noPlaylist);
+                tvNoPlaylist.setText("No Spotifilm playlist. Create one withe the (+) button ");
             }
         });
 
     }
 
     private void initBtnListener() {
-        btnRecentlyPlayed.setOnClickListener(view -> getRecentlyPlayed());
-        btnAddToLike.setOnClickListener(view -> putSongLiked());
         fabAdd.setOnClickListener(view -> {
             new AlertDialog.Builder(view.getContext())
                     .setView(R.layout.activity_input_playlist_names)
@@ -158,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         reqService.getRecentlyPlayedTracks(() -> {
             recentlyPlayedTracks = reqService.getSongs();
             if (recentlyPlayedTracks.size() > 0) {
-                tv.setText(recentlyPlayedTracks.get(0).getName());
                 song = recentlyPlayedTracks.get(0);
             }
         });

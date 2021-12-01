@@ -22,22 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="30dp" />
 
-        <Button
-            android:id="@+id/btnRecentlyPlayed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RecentlyPlayed" />
-
-        <Button
-            android:id="@+id/btnAddToLike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AddToLike" />
-
         <TextView
-            android:id="@+id/tv"
+            android:id="@+id/noPlaylist"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="wrap_content"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPlaylists"

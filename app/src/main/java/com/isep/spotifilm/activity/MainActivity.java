@@ -1,14 +1,17 @@
 package com.isep.spotifilm.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,7 +108,26 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private void initBtnListener() {
         btnRecentlyPlayed.setOnClickListener(view -> getRecentlyPlayed());
         btnAddToLike.setOnClickListener(view -> putSongLiked());
-        fabAdd.setOnClickListener(view -> addPlaylist());
+        fabAdd.setOnClickListener(view -> {
+            new AlertDialog.Builder(view.getContext())
+                    .setView(R.layout.activity_input_playlist_names)
+                    .setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            EditText etName = (EditText) ((AlertDialog) dialog).findViewById(R.id.etInputPlaylistName);
+                            EditText etDescription = (EditText) ((AlertDialog) dialog).findViewById(R.id.etInputPlaylistDescription);
+
+                            addPlaylist(etName.getText().toString(), etDescription.getText().toString());
+                        }
+                    })
+                    .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
+
+        });
         fabPlay.setOnClickListener(view -> playPlaylist());
         fabEdit.setOnClickListener(view -> editPlaylist());
     }
@@ -117,8 +139,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     }
 
-    private void addPlaylist() {
-        reqService.createNewPlaylist(() -> {
+    private void addPlaylist(String playlistName, String playlistDescription) {
+
+        reqService.createNewPlaylist(playlistName, playlistDescription, () -> {
             //TODO
             System.out.println("ouvrir page playlist");
         });

@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
 
@@ -42,8 +40,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     FloatingActionButton fabAdd;
     FloatingActionButton fabPlay;
     FloatingActionButton fabEdit;
-
-    List<View> itemViewList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,12 +94,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         //request to get current user playlist en populate recycler view with it
         reqService.getUserPlaylists(() -> {
             userPlaylist = reqService.getPlaylists();
-            System.out.println("coucou : "+userPlaylist);
-            System.out.println(userPlaylist);
             for (Playlist p : userPlaylist) {
                 playlistNames.add(p.getName());
+                adapter.notifyItemInserted(adapter.getItemCount()-1);
             }
-            adapter.notifyDataSetChanged();
         });
 
     }

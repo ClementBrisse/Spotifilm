@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<Playlist> playlists = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
 
@@ -65,6 +67,45 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
         return songs;
+    }
+
+    public ArrayList<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public ArrayList<Playlist> getUserPlaylists(final IVolleyCallBack callBack) {
+        String endpoint = "https://api.spotify.com/v1/me/playlists";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    Gson gson = new Gson();
+                    JSONArray jsonArray = response.optJSONArray("items");
+                    for (int n = 0; n < jsonArray.length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            Playlist playlist = new Playlist( object.get("id").toString(),  object.get("name").toString());
+                            playlists.add(playlist);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println(playlists);
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+        return playlists;
     }
 
     public void putSongLiked(Song song) {

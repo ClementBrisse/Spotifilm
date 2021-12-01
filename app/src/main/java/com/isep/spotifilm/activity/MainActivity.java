@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.MyRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
+import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
@@ -32,8 +33,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private Song song;
 
     private ReqService reqService;
-    private ArrayList<Song> recentlyPlayedTracks;
+    private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
+    private ArrayList<Playlist> userPlaylist = new ArrayList<>();
 
+    RecyclerView recyclerView;
     MyRecyclerViewAdapter adapter;
 
     FloatingActionButton fabAdd;
@@ -64,16 +67,19 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         SharedPreferences sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
         userView.setText(sharedPreferences.getString("userid", "No User"));
 
-        // data to populate the RecyclerView with
-        ArrayList<String> playlistNames = new ArrayList<>();
-        playlistNames.add("Playlist 1");
-        playlistNames.add("Playlist 2");
-        playlistNames.add("Playlist 3");
-        playlistNames.add("Playlist 4");
-        playlistNames.add("Playlist 5");
 
+        recyclerView = findViewById(R.id.rvPlaylists);
+        initUserPlaylist();
+
+        //change color of selected playlist
+        /*final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row, parent, false);
+        itemViewList.add(itemView); //to add all the 'list row item' views*/
+
+
+    }
+
+    private void initUserPlaylist(){
         // set up the RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.rvPlaylists);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -81,14 +87,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), linearLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
+        // list to populate the RecyclerView with
+        ArrayList<String> playlistNames = new ArrayList<>();
+        playlistNames.add("Playlist 2");
+
         adapter = new MyRecyclerViewAdapter(this, playlistNames);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
-        //change color of selected playlist
-        /*final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row, parent, false);
-        itemViewList.add(itemView); //to add all the 'list row item' views*/
-
+        //request to get current user playlist en populate recycler view with it
+        reqService.getUserPlaylists(() -> {
+            userPlaylist = reqService.getPlaylists();
+            System.out.println("coucou : "+userPlaylist);
+            System.out.println(userPlaylist);
+            for (Playlist p : userPlaylist) {
+                playlistNames.add(p.getName());
+            }
+            adapter.notifyDataSetChanged();
+        });
 
     }
 

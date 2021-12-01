@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
 
     private void editPlaylist() {
-
     }
 
     private void playPlaylist() {
@@ -109,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
 
     private void addPlaylist() {
+        reqService.createNewPlaylist(() -> {
+            //TODO
+            System.out.println("ouvrir page playlist");
+        });
 
     }
 

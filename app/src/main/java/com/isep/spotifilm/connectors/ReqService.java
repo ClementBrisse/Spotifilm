@@ -140,8 +140,8 @@ public class ReqService {
         return createdPlaylist;
     }
 
-    public void createNewPlaylist(String playlistName, String playlistDescription, final IVolleyCallBack callBack) {    
-        String endpoint = "https://api.spotify.com/v1/users/49hbxivjgp86e7ncuqy6ry5bs/playlists";
+    public void createNewPlaylist(String userID, String playlistName, String playlistDescription, final IVolleyCallBack callBack) {
+        String endpoint = "https://api.spotify.com/v1/users/"+ userID + "/playlists";
 
         Map<String,String> params = new HashMap<>();
         params.put("name", "Spotifilm_" + playlistName);
@@ -152,7 +152,7 @@ public class ReqService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, endpoint, parameters, response -> {
                     try {
-                        createdPlaylist = new Playlist(response.getString("name"), response.getString("name"));
+                        createdPlaylist = new Playlist(response.getString("id"), response.getString("name"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

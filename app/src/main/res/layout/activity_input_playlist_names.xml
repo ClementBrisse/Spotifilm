@@ -7,26 +7,27 @@
 
     <EditText
         android:id="@+id/etInputPlaylistName"
-        android:layout_width="400dp"
-        android:layout_height="135dp"
-        android:hint="android"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:hint="Enter Playlist Name"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/etInputPlaylistDescription"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/etInputPlaylistDescription"
-        android:layout_width="400dp"
-        android:layout_height="135dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="256dp"
-        android:hint="android"
+        android:hint="Enter Playlist Description"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

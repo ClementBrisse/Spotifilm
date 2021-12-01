@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
     private ArrayList<Playlist> userPlaylist = new ArrayList<>();
 
+    SharedPreferences sharedPreferences;
+
     RecyclerView recyclerView;
     MyRecyclerViewAdapter adapter;
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         initBtnListener();
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
+        sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
         userView.setText(sharedPreferences.getString("userid", "No User"));
 
 
@@ -88,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         // list to populate the RecyclerView with
         ArrayList<String> playlistNames = new ArrayList<>();
-        playlistNames.add("Playlist 2");
 
         adapter = new MyRecyclerViewAdapter(this, playlistNames);
         adapter.setClickListener(this);
@@ -98,8 +99,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         reqService.getUserPlaylists(() -> {
             userPlaylist = reqService.getPlaylists();
             for (Playlist p : userPlaylist) {
-                playlistNames.add(p.getName());
-                adapter.notifyItemInserted(adapter.getItemCount()-1);
+                String playlistName = p.getName();
+                if (playlistName.contains("Spotifilm_")){
+                    playlistNames.add(playlistName);
+                    adapter.notifyItemInserted(adapter.getItemCount()-1);
+                }
+
             }
         });
 
@@ -141,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     
     private void addPlaylist(String playlistName, String playlistDescription) {
 
-        reqService.createNewPlaylist(playlistName, playlistDescription, () -> {
+        reqService.createNewPlaylist(sharedPreferences.getString("userid", ""), playlistName, playlistDescription, () -> {
             System.out.println("Playlist : "+reqService.getCreatedPlaylist().getName()+" created");
             //TODO ouvrir page playlist
         });

@@ -139,12 +139,13 @@ public class ReqService {
     public  Playlist getCreatedPlaylist(){
         return createdPlaylist;
     }
-    public void createNewPlaylist(final IVolleyCallBack callBack) {
+
+    public void createNewPlaylist(String playlistName, String playlistDescription, final IVolleyCallBack callBack) {    
         String endpoint = "https://api.spotify.com/v1/users/49hbxivjgp86e7ncuqy6ry5bs/playlists";
 
         Map<String,String> params = new HashMap<>();
-        params.put("name", "Spotifilm_FirstPlaylist");
-        params.put("description", "Spotifilm_FirstPlaylistDescription");
+        params.put("name", "Spotifilm_" + playlistName);
+        params.put("description", playlistDescription);
         params.put("public", "false");
 
         JSONObject parameters = new JSONObject(params);

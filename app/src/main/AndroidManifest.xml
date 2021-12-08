@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Spotifilm">
         <activity
+            android:name=".activity.EditPlaylistActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true" />
         <activity

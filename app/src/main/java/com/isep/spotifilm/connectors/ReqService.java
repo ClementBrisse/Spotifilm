@@ -26,6 +26,7 @@ public class ReqService {
     private Playlist createdPlaylist;
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
+    private String availableDeviceId;
 
     public ReqService(Context context) {
         sharedPreferences = context.getSharedPreferences("SPOTIFY", 0);
@@ -68,6 +69,41 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
         return songs;
+    }
+
+    public String getDeviceId() {
+        return availableDeviceId;
+    }
+
+    public String getAvailableDevice(final IVolleyCallBack callBack) {
+        String endpoint = "https://api.spotify.com/v1/me/player/devices";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    Gson gson = new Gson();
+                    JSONArray jsonArray = response.optJSONArray("devices");
+                    try {
+                        JSONObject object = jsonArray.getJSONObject(0);
+                        availableDeviceId = object.getString("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+        return availableDeviceId;
     }
 
     public ArrayList<Playlist> getPlaylists() {

@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private ReqService reqService;
     private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
     private ArrayList<Playlist> userPlaylist = new ArrayList<>();
+    public String playlistIdSelected = ""; //TODO !!! check that a playlist was clicked before a fab button is used
+    public String deviceId;
 
     SharedPreferences sharedPreferences;
 
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         /*final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row, parent, false);
         itemViewList.add(itemView); //to add all the 'list row item' views*/
 
+        reqService.getAvailableDevice(() -> { deviceId = reqService.getDeviceId(); System.out.println("DEVICE ID : " + deviceId);});
+
+
 
     }
 
@@ -89,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         //request to get current user playlist en populate recycler view with it
         reqService.getUserPlaylists(() -> {
             userPlaylist = reqService.getPlaylists();
+            //removing all the playlist objects in arrayList that are not Spotifilm playlists
+            userPlaylist.removeIf(p -> !p.getName().contains("Spotifilm_"));
+
             int userPlaylistCount = 0;
             for (Playlist p : userPlaylist) {
                 String playlistName = p.getName();
@@ -127,14 +135,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
                     .show();
 
         });
-        fabPlay.setOnClickListener(view -> playPlaylist());
+        fabPlay.setOnClickListener(view -> playPlaylist(playlistIdSelected));
         fabEdit.setOnClickListener(view -> editPlaylist());
     }
 
     private void editPlaylist() {
     }
 
-    private void playPlaylist() {
+    private void playPlaylist(String playlistIdSelected) {
 
     }
     
@@ -165,7 +173,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        //TODO select playlist
+        playlistIdSelected = userPlaylist.get(position).getId();
+        Toast.makeText(this, "You selected " + userPlaylist.get(position).getName() + " of id : " + userPlaylist.get(position).getId(), Toast.LENGTH_SHORT).show();
+
         //TODO change color of clicked tv item
 
     }

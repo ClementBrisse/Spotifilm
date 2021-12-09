@@ -1,35 +1,28 @@
 package com.isep.spotifilm.adapter;
 
 import android.content.Context;
-import android.graphics.Movie;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
-import com.isep.spotifilm.connectors.ReqService;
-import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Song;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
+public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecyclerViewAdapter.ViewHolder> {
 
-    private List<Album> mData;
+    private List<Song> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
 
     // data is passed into the constructor
-    public AlbumRecyclerViewAdapter(Context context, List<Album> data) {
+    public TrackRecyclerViewAdapter(Context context, List<Song> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -37,27 +30,17 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_row_album, parent, false);
+        View view = mInflater.inflate(R.layout.reciclerview_row_track, parent, false);
         return new ViewHolder(view);
     }
 
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Album album = mData.get(position);
-        holder.albumTitle.setText(album.getName());
-        holder.bind(album);
+        Song playlistName = mData.get(position);
+        holder.myTextView.setText(playlistName.getName());
 
         holder.itemView.setSelected(selectedPos == position);
-
-        holder.itemView.setOnClickListener(v -> {
-            // Get the current state of the item
-            boolean expanded = album.isExpanded();
-            // Change the state
-            album.setExpanded(!expanded);
-            // Notify the adapter that item has changed
-            notifyItemChanged(position);
-        });
     }
 
     // total number of rows
@@ -69,18 +52,11 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView albumTitle;
-        TextView albumInfo;
-        LinearLayout subItem;
-        RecyclerView trackRecyclerView;
+        TextView myTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
-            albumTitle = itemView.findViewById(R.id.albumTitle);
-            albumInfo = itemView.findViewById(R.id.albumInfo);
-            trackRecyclerView = itemView.findViewById(R.id.rvTrack);
-            subItem = itemView.findViewById(R.id.subItem);
-
+            myTextView = itemView.findViewById(R.id.tvTrackName);
             itemView.setOnClickListener(this);
         }
 
@@ -91,20 +67,10 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             selectedPos = getLayoutPosition();
             notifyItemChanged(selectedPos);
         }
-
-        public void bind(Album album) {
-            // Get the state
-            boolean expanded = album.isExpanded();
-            // Set the visibility based on state
-            subItem.setVisibility(expanded ? View.VISIBLE : View.GONE);
-
-            albumTitle.setText(album.getName());
-            albumInfo.setText(album.getId());
-        }
     }
 
     // convenience method for getting data at click position
-    public Album getItem(int id) {
+    public Song getItem(int id) {
         return mData.get(id);
     }
 

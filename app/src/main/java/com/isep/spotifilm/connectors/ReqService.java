@@ -3,6 +3,8 @@ package com.isep.spotifilm.connectors;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.DoNotInline;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ReqService {
-    private final ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<Song> songs = new ArrayList<>();
     private final ArrayList<Playlist> playlists = new ArrayList<>();
     private final ArrayList<Album> albums = new ArrayList<>();
     private Playlist createdPlaylist;
@@ -40,6 +42,7 @@ public class ReqService {
     }
 
     public ArrayList<Song> getRecentlyPlayedTracks(final IVolleyCallBack callBack) {
+        songs = new ArrayList<>();
         String endpoint = "https://api.spotify.com/v1/me/player/recently-played";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
@@ -194,10 +197,13 @@ public class ReqService {
                             JSONObject albumObj = Objects.requireNonNull(trackObj).optJSONObject("album");
                             String albumName = Objects.requireNonNull(albumObj).getString("name");
                             String albumId = albumObj.getString("id");
-                            if(!isAlbumInAlbumList(albumId)){
-                                Album album = new Album( albumId,  albumName);
+                            Album album = getAlbumInListIfExist(albumId);
+                            if(album == null){
+                                album = new Album(albumId,  albumName);
                                 albums.add(album);
                             }
+                            String trackId = trackObj.getString("id");
+                            album.checkSong(trackId);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -219,12 +225,45 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
-    private boolean isAlbumInAlbumList(String albumId){
+    private Album getAlbumInListIfExist(String albumId){
         for (Album album : albums){
             if(album.getId().equals(albumId)){
-                return true;
+                return album;
             }
         }
-        return false;
+        return null;
+    }
+
+    public void getTracksFromAlbum(String albumId, final IVolleyCallBack callBack) {
+        songs = new ArrayList<>();
+        String endpoint = "https://api.spotify.com/v1/albums/"+albumId+"/tracks";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("items");
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            String trackId = object.getString("id");
+                            String trackName = object.getString("name");
+                            Song song = new Song(trackId, trackName);
+                            songs.add(song);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
     }
 }

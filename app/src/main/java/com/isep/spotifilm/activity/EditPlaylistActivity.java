@@ -56,7 +56,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         recyclerViewAlbum.addItemDecoration(dividerItemDecoration);
 
         // list to populate the RecyclerView with
-        ArrayList<String> albumsNames = new ArrayList<>();
+        ArrayList<Album> albumsNames = new ArrayList<>();
 
         adapter = new AlbumRecyclerViewAdapter(this, albumsNames);
         adapter.setClickListener(this);
@@ -67,8 +67,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
             albumList = reqService.getAlbums();
             int albumsCount = 0;
             for (Album a : albumList) {
-                String albumName = a.getName();
-                albumsNames.add(albumName);
+                albumsNames.add(a);
                 adapter.notifyItemInserted(adapter.getItemCount()-1);
                 albumsCount++;
             }
@@ -100,4 +99,5 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
 
     }
+
 }

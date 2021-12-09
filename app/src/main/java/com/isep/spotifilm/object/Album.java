@@ -22,46 +22,51 @@ import java.util.stream.Collectors;
 
 public class Album {
 
-    Map<Song, Boolean > trackDict = new HashMap<>();  //dictionary with all the song off an album and a boolean to indicate if the song is in the playlist
+    List<Song> tracks = new ArrayList<>();
     String name;
     String id;
+    List<String> artists;
 
     boolean expanded; //state of the item in the view
 
-    public Album(String id, String name) {
+    public Album(String id, String name, List<String> artists) {
         this.name = name;
         this.id = id;
+        this.artists = artists;
 
         //init all music from album to the status "not in the playlist"
         ReqService reqService = new ReqService(MyApplication.getContext());
         reqService.getTracksFromAlbum(id, () -> {
-            ArrayList<Song> songs = reqService.getSongs();
-//            for (Song song : songs){
-//                trackDict.put(song, Boolean.FALSE);
-//            }
-
-            trackDict = songs.stream().collect(Collectors.toMap(Function.identity (), k -> Boolean.FALSE));
+            tracks = reqService.getSongs();
         });
-        System.out.println(trackDict.toString());
-
     }
 
     public void checkSong(String songId){
-        for (Map.Entry<Song, Boolean> entry : trackDict.entrySet()) {
-            if(entry.getKey().getId().equals(songId)){
-                entry.setValue(Boolean.TRUE);
+        System.out.println("check song "+songId);
+        for (Song song : tracks) {
+            if(song.getId().equals(songId)){
+                song.setSelected(Boolean.TRUE);
                 break;
             }
         }
     }
 
     public void uncheckSong(String songId){
-        for (Map.Entry<Song, Boolean> entry : trackDict.entrySet()) {
-            if(entry.getKey().getId().equals(songId)){
-                entry.setValue(Boolean.FALSE);
+        for (Song song : tracks) {
+            if(song.getId().equals(songId)){
+                song.setSelected(Boolean.FALSE);
                 break;
             }
         }
+    }
+
+    public int getNumberOfTracks(){
+        return tracks.size();
+    }
+
+    public int getNumberOfSelectedTracks(){
+        System.out.println(tracks.toString());
+        return (int) tracks.stream().filter(Song::isSelected).count();
     }
 
     public String getId() {
@@ -72,8 +77,8 @@ public class Album {
         return name;
     }
 
-    public Map<Song, Boolean > getTrackDict(){
-        return trackDict;
+    public List<Song> getTracks(){
+        return tracks;
     }
 
     public boolean isExpanded(){
@@ -81,6 +86,9 @@ public class Album {
     }
     public void setExpanded(boolean expanded){
         this.expanded = expanded;
+    }
+    public List<String> getArtists(){
+        return artists;
     }
 
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,6 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Album album = mData.get(position);
-        holder.albumTitle.setText(album.getName());
         holder.bind(album);
 
         holder.itemView.setSelected(selectedPos == position);
@@ -68,11 +69,14 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
 
     // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, TrackRecyclerViewAdapter.ItemClickListener {
+
         TextView albumTitle;
         TextView albumInfo;
         LinearLayout subItem;
+
         RecyclerView trackRecyclerView;
+        TrackRecyclerViewAdapter adapter;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -97,9 +101,37 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             boolean expanded = album.isExpanded();
             // Set the visibility based on state
             subItem.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            intiSubItemRV(album);
 
             albumTitle.setText(album.getName());
-            albumInfo.setText(album.getId());
+            StringBuilder info = new StringBuilder();
+            for(String artist : album.getArtists()){
+                info.append(artist).append(", ");
+            }
+            info.append(album.getNumberOfSelectedTracks()).append("/").append(album.getNumberOfTracks());
+
+            albumInfo.setText(info.toString());
+        }
+
+        private void intiSubItemRV(Album album){
+            // set up the RecyclerView
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyApplication.getContext());
+            trackRecyclerView.setLayoutManager(linearLayoutManager);
+
+            //add divider between row
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(trackRecyclerView.getContext(), linearLayoutManager.getOrientation());
+            trackRecyclerView.addItemDecoration(dividerItemDecoration);
+
+            // populate the RecyclerView
+            adapter = new TrackRecyclerViewAdapter(MyApplication.getContext(), album.getTracks());
+            adapter.setClickListener(this);
+            trackRecyclerView.setAdapter(adapter);
+        }
+
+        @Override
+        public void onItemClick(View view, int position) {
+            //TODO
+            Toast.makeText(MyApplication.getContext(), "TODO : on click track "+ adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
         }
     }
 

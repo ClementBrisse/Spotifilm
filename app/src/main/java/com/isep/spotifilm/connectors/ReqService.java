@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -233,9 +235,10 @@ public class ReqService {
                             JSONObject albumObj = Objects.requireNonNull(trackObj).optJSONObject("album");
                             String albumName = Objects.requireNonNull(albumObj).getString("name");
                             String albumId = albumObj.getString("id");
+                            List<String> albumArtists = Utils.getListOfItemFromJSONArray(albumObj.getJSONArray("artists"), "name");
                             Album album = getAlbumInListIfExist(albumId);
                             if(album == null){
-                                album = new Album(albumId,  albumName);
+                                album = new Album(albumId,  albumName, albumArtists);
                                 albums.add(album);
                             }
                             String trackId = trackObj.getString("id");
@@ -281,7 +284,7 @@ public class ReqService {
                             JSONObject object = jsonArray.getJSONObject(n);
                             String trackId = object.getString("id");
                             String trackName = object.getString("name");
-                            Song song = new Song(trackId, trackName);
+                            Song song = new Song(trackId, trackName, false);
                             songs.add(song);
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -4,38 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context=".activity.MainActivity">
+    android:orientation="vertical"
+    tools:context=".activity.EditPlaylistActivity">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/tableRow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/user"
-            android:layout_width="match_parent"
-            android:layout_height="30dp" />
-
-        <TextView
-            android:id="@+id/noPlaylist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <Button
-            android:id="@+id/button"
+            android:id="@+id/playlistName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Open edit playlist"
-            android:onClick="openEdit"/>
+            android:gravity="center"
+            android:text="Spotifilm_PlaylistName"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/noMusic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPlaylists"
+            android:id="@+id/rvAlbums"
             android:layout_width="match_parent"
             android:layout_height="474dp" />
 
@@ -61,24 +53,14 @@
             android:src="@android:drawable/ic_menu_add" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabPlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:clickable="true"
-            android:contentDescription="play"
-            android:src="@android:drawable/ic_media_play" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabEdit"
+            android:id="@+id/fabSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
             android:clickable="true"
-            android:contentDescription="edit"
-            android:src="@android:drawable/ic_menu_edit" />
+            android:contentDescription="save"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
+
     </TableRow>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

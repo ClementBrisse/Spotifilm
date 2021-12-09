@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -180,6 +181,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         //TODO change color of clicked tv item
 
+    }
+
+    public void openEdit(View view) {
+        Intent myIntent = new Intent(MainActivity.this, EditPlaylistActivity.class);
+//        myIntent.putExtra("key", value); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
     }
 
 }

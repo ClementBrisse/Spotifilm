@@ -3,12 +3,16 @@ package com.isep.spotifilm.connectors;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.DoNotInline;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.isep.spotifilm.Utils;
+import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
 
@@ -18,11 +22,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
-    private ArrayList<Playlist> playlists = new ArrayList<>();
+    private final ArrayList<Playlist> playlists = new ArrayList<>();
+    private final ArrayList<Album> albums = new ArrayList<>();
     private Playlist createdPlaylist;
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
@@ -38,6 +45,7 @@ public class ReqService {
     }
 
     public ArrayList<Song> getRecentlyPlayedTracks(final IVolleyCallBack callBack) {
+        songs = new ArrayList<>();
         String endpoint = "https://api.spotify.com/v1/me/player/recently-played";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
@@ -209,4 +217,92 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
+    public ArrayList<Album> getAlbums(){
+        return albums;
+    }
+
+    public void getAlbumsFromPlaylist(final IVolleyCallBack callBack) {
+        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONObject tracks = response.optJSONObject("tracks");
+                    JSONArray jsonArray =  Objects.requireNonNull(tracks).optJSONArray("items");
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            JSONObject trackObj = object.optJSONObject("track");
+                            JSONObject albumObj = Objects.requireNonNull(trackObj).optJSONObject("album");
+                            String albumName = Objects.requireNonNull(albumObj).getString("name");
+                            String albumId = albumObj.getString("id");
+                            List<String> albumArtists = Utils.getListOfItemFromJSONArray(albumObj.getJSONArray("artists"), "name");
+                            Album album = getAlbumInListIfExist(albumId);
+                            if(album == null){
+                                album = new Album(albumId,  albumName, albumArtists);
+                                albums.add(album);
+                            }
+                            String trackId = trackObj.getString("id");
+                            album.checkSong(trackId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println(albums);
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+    private Album getAlbumInListIfExist(String albumId){
+        for (Album album : albums){
+            if(album.getId().equals(albumId)){
+                return album;
+            }
+        }
+        return null;
+    }
+
+    public void getTracksFromAlbum(String albumId, final IVolleyCallBack callBack) {
+        songs = new ArrayList<>();
+        String endpoint = "https://api.spotify.com/v1/albums/"+albumId+"/tracks";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("items");
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            String trackId = object.getString("id");
+                            String trackName = object.getString("name");
+                            Song song = new Song(trackId, trackName, false);
+                            songs.add(song);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
 }

@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
 
     private void playPlaylist(String playlistIdSelected) {
+        reqService.putPlayPlaylist(playlistIdSelected);
 
     }
     

@@ -345,4 +345,38 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
     }
+
+    public void putPlayPlaylist(String playlistId) {
+        //preparePutPayload
+
+        JSONObject offset = new JSONObject();
+        try {
+            offset.put("position", 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }JSONObject payload = new JSONObject();
+        try {
+            payload.put("context_uri", "spotify:playlist:" + playlistId);
+            payload.put("offset", offset);
+            payload.put("position_ms:",  0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //request
+        String url = "https://api.spotify.com/v1/me/player/play?device_id=" + getDeviceId();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url,payload, response -> {
+        }, error -> {
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
 }

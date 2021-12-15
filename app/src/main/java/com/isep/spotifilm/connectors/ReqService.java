@@ -34,6 +34,7 @@ public class ReqService {
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
     private String availableDeviceId;
+    private boolean isPlayerPlaying;
 
     public ReqService(Context context) {
         sharedPreferences = context.getSharedPreferences("SPOTIFY", 0);
@@ -348,7 +349,6 @@ public class ReqService {
 
     public void putPlayPlaylist(String playlistId) {
         //preparePutPayload
-
         JSONObject offset = new JSONObject();
         try {
             offset.put("position", 0);
@@ -365,6 +365,50 @@ public class ReqService {
         //request
         String url = "https://api.spotify.com/v1/me/player/play?device_id=" + getDeviceId();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url,payload, response -> {
+        }, error -> {
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+    public Boolean getIsPlayerPlaying() {
+        String endpoint = "https://api.spotify.com/v1/me/player";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    try {
+                        isPlayerPlaying = response.getBoolean("is_playing");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    // TODO: Handle error
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+        return isPlayerPlaying;
+    }
+
+    public void putPausePlayback() {
+        //request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, "https://api.spotify.com/v1/me/player/pause?device_id=" + getDeviceId(),null, response -> {
         }, error -> {
         }) {
             @Override

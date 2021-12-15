@@ -42,13 +42,16 @@ public class Album {
     }
 
     public void checkSong(String songId){
-        System.out.println("check song "+songId);
+        System.out.println("Search : "+songId);
+        System.out.println(tracks.size());
         for (Song song : tracks) {
+            System.out.println("       - " + song.getId());
             if(song.getId().equals(songId)){
                 song.setSelected(Boolean.TRUE);
                 break;
             }
         }
+        System.out.println(songId+" not found in album");
     }
 
     public void uncheckSong(String songId){

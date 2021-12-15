@@ -27,13 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Open edit playlist"
-            android:onClick="openEdit"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPlaylists"
             android:layout_width="match_parent"

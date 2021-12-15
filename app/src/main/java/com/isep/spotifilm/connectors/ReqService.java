@@ -221,9 +221,9 @@ public class ReqService {
         return albums;
     }
 
-    public void getAlbumsFromPlaylist(final IVolleyCallBack callBack) {
-        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
+    public void getAlbumsFromPlaylist(String playlistId, final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
+        //create all albums
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
                     JSONObject tracks = response.optJSONObject("tracks");
@@ -241,8 +241,48 @@ public class ReqService {
                                 album = new Album(albumId,  albumName, albumArtists);
                                 albums.add(album);
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    checkSelectedSongInAlbum(playlistId, callBack);
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+
+    }
+
+    private void checkSelectedSongInAlbum(String playlistId, final IVolleyCallBack callBack){
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
+        //check selected song in albums
+        //not in the same request as the first one need to end so the albums are populated
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONObject tracks = response.optJSONObject("tracks");
+                    JSONArray jsonArray =  Objects.requireNonNull(tracks).optJSONArray("items");
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            JSONObject trackObj = object.optJSONObject("track");
                             String trackId = trackObj.getString("id");
-                            album.checkSong(trackId);
+                            JSONObject albumObj = Objects.requireNonNull(trackObj).optJSONObject("album");
+                            String albumId = albumObj.getString("id");
+                            Album album = getAlbumInListIfExist(albumId);
+                            if(album == null){
+                                System.out.println("Album "+albumId+" not found");
+                            } else {
+                                album.checkSong(trackId);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

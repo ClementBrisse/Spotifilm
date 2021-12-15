@@ -221,8 +221,7 @@ public class ReqService {
         return albums;
     }
 
-    public void getAlbumsFromPlaylist(final IVolleyCallBack callBack) {
-        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
+    public void getAlbumsFromPlaylist(String playlistId, final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
         //create all albums
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -246,7 +245,7 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    checkSelectedSongInAlbum(callBack);
+                    checkSelectedSongInAlbum(playlistId, callBack);
                 }, error -> {
                     // TODO: Handle error
                 }) {
@@ -263,8 +262,7 @@ public class ReqService {
 
     }
 
-    private void checkSelectedSongInAlbum(final IVolleyCallBack callBack){
-        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
+    private void checkSelectedSongInAlbum(String playlistId, final IVolleyCallBack callBack){
         String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
         //check selected song in albums
         //not in the same request as the first one need to end so the albums are populated

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
     private ArrayList<Playlist> userPlaylist = new ArrayList<>();
     public String playlistIdSelected = ""; //TODO !!! check that a playlist was clicked before a fab button is used
+    public String playlistNameSelected = "";
     public String deviceId;
 
     SharedPreferences sharedPreferences;
@@ -141,6 +142,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
 
     private void editPlaylist() {
+        if(!playlistIdSelected.isEmpty()){
+            Intent myIntent = new Intent(MainActivity.this, EditPlaylistActivity.class);
+            myIntent.putExtra("playlistId", playlistIdSelected);
+            myIntent.putExtra("playlistName", playlistNameSelected);
+            MainActivity.this.startActivity(myIntent);
+        } else {
+            Toast.makeText(this, "Select a playlist to edit", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void playPlaylist(String playlistIdSelected) {
@@ -174,19 +183,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     @Override
     public void onItemClick(View view, int position) {
-        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
         //TODO select playlist
         playlistIdSelected = userPlaylist.get(position).getId();
+        playlistNameSelected = userPlaylist.get(position).getName();
         Toast.makeText(this, "You selected " + userPlaylist.get(position).getName() + " of id : " + userPlaylist.get(position).getId(), Toast.LENGTH_SHORT).show();
 
         //TODO change color of clicked tv item
 
-    }
-
-    public void openEdit(View view) {
-        Intent myIntent = new Intent(MainActivity.this, EditPlaylistActivity.class);
-//        myIntent.putExtra("key", value); //Optional parameters
-        MainActivity.this.startActivity(myIntent);
     }
 
 }

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
 
     private ReqService reqService;
     private ArrayList<Album> albumList = new ArrayList<>();
+    private  String playlistId;
+    private  String playlistName;
 
     RecyclerView recyclerViewAlbum;
     AlbumRecyclerViewAdapter adapter;
@@ -34,8 +37,14 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_playlist);
 
+        Intent intent = getIntent();
+        playlistId = intent.getStringExtra("playlistId");
+        playlistName = intent.getStringExtra("playlistName");
+
         reqService = new ReqService(getApplicationContext());
 
+        TextView playlistNameTv = findViewById(R.id.playlistName);
+        playlistNameTv.setText(playlistName);
         fabAdd = findViewById(R.id.fabAdd);
         fabSave = findViewById(R.id.fabSave);
 
@@ -63,7 +72,8 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         recyclerViewAlbum.setAdapter(adapter);
 
         //request to get all album from selected playlist en populate recycler view with it
-        reqService.getAlbumsFromPlaylist(() -> {
+//        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
+        reqService.getAlbumsFromPlaylist(playlistId, () -> {
             albumList = reqService.getAlbums();
             int albumsCount = 0;
             for (Album a : albumList) {

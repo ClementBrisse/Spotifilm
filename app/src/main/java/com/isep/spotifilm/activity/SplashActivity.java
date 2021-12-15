@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "e55720db87ae46669b49545b9004b061";
     private static final String REDIRECT_URI = "https://com.isep.spotifilm.activity/callback";
     private static final int REQUEST_CODE = 1337;
-    private static final String SCOPES = "user-read-recently-played,user-library-modify,user-read-email,user-read-private,user-read-playback-state," +
+    private static final String SCOPES = "user-read-recently-played,user-library-modify,user-read-email,user-read-private,user-read-playback-state,user-modify-playback-state," +
             "playlist-read-private,playlist-modify-public,playlist-modify-private"+
             "";
 

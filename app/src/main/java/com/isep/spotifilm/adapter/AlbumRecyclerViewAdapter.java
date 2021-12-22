@@ -5,6 +5,7 @@ import android.graphics.Movie;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +75,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         TextView albumTitle;
         TextView albumInfo;
         LinearLayout subItem;
+        ImageView imageView;
 
         RecyclerView trackRecyclerView;
         TrackRecyclerViewAdapter adapter;
@@ -84,6 +86,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             albumInfo = itemView.findViewById(R.id.albumInfo);
             trackRecyclerView = itemView.findViewById(R.id.rvTrack);
             subItem = itemView.findViewById(R.id.subItem);
+            imageView = itemView.findViewById(R.id.imageView);
 
             itemView.setOnClickListener(this);
         }
@@ -110,6 +113,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             }
             info.append(album.getNumberOfSelectedTracks()).append("/").append(album.getNumberOfTracks());
 
+//            imageView.setBackground(album.getImg());
             albumInfo.setText(info.toString());
         }
 

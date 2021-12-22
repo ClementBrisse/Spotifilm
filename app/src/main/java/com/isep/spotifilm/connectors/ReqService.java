@@ -2,6 +2,7 @@ package com.isep.spotifilm.connectors;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.DoNotInline;
 
@@ -20,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +38,7 @@ public class ReqService {
     private RequestQueue queue;
     private String availableDeviceId;
     private boolean isPlayerPlaying;
+    private String imgURL ="";
 
     public ReqService(Context context) {
         sharedPreferences = context.getSharedPreferences("SPOTIFY", 0);
@@ -423,4 +427,35 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
     }
+
+    public Drawable getAlbumIgmCover(String albumId){
+        songs = new ArrayList<>();
+        String endpoint = "https://api.spotify.com/v1/albums/"+albumId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("images");
+                    try {
+                        assert jsonArray != null;
+                        JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
+                        imgURL = object.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+        return Utils.LoadImageFromWebURL(imgURL);
+    }
+
 }

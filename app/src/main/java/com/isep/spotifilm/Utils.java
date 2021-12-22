@@ -1,9 +1,13 @@
 package com.isep.spotifilm;
 
+import android.graphics.drawable.Drawable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,5 +24,15 @@ public class Utils {
             }
         }
         return res;
+    }
+
+    public static Drawable LoadImageFromWebURL(String url) {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

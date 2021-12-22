@@ -1,5 +1,6 @@
 package com.isep.spotifilm.object;
 
+import android.graphics.drawable.Drawable;
 import android.os.Debug;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class Album {
     String name;
     String id;
     List<String> artists;
+    Drawable img;
 
     boolean expanded; //state of the item in the view
 
@@ -39,6 +41,7 @@ public class Album {
         reqService.getTracksFromAlbum(id, () -> {
             tracks = reqService.getSongs();
         });
+        img = reqService.getAlbumIgmCover(id);
     }
 
     public void checkSong(String songId){
@@ -94,4 +97,7 @@ public class Album {
         return artists;
     }
 
+    public Drawable getImg() {
+        return img;
+    }
 }

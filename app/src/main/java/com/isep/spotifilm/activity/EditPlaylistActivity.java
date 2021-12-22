@@ -83,7 +83,6 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         recyclerViewAlbum.setAdapter(adapter);
 
         //request to get all album from selected playlist en populate recycler view with it
-//        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
         reqService.getAlbumsFromPlaylist(playlistId, () -> {
             albumList = reqService.getAlbums();
             int albumsCount = 0;

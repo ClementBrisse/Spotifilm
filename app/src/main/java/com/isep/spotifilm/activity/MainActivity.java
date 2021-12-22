@@ -157,7 +157,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
 
     private void playPlaylist(String playlistIdSelected) {
-        reqService.putPlayPlaylist(playlistIdSelected);
+        boolean isPlayerPlaying = reqService.getIsPlayerPlaying();
+        if (isPlayerPlaying){
+            reqService.putPausePlayback();
+        }else {
+            reqService.putPlayPlaylist(playlistIdSelected);
+        }
+
 
     }
     

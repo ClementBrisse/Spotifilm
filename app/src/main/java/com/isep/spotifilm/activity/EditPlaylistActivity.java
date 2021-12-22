@@ -118,30 +118,26 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.info) {
-            Toast.makeText(getApplicationContext(), "info Button Clicked", Toast.LENGTH_SHORT).show();
-//            new AlertDialog.Builder(EditPlaylistActivity.this)
-//                    .setView(R.layout.activity_info)
-//                    .show();
+            new AlertDialog.Builder(EditPlaylistActivity.this)
+                    .setView(R.layout.activity_info)
+                    .setPositiveButton("Ok", (dialog, which) -> { })
+                    .show();
         } else {
-            Toast.makeText(getApplicationContext(), "Back Button Clicked", Toast.LENGTH_SHORT).show();
+            //if not info then it's the back button
             Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);
             EditPlaylistActivity.this.startActivity(myIntent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    // create an action bar button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // R.menu.mymenu is a reference to an xml file named mymenu.xml which should be inside your res/menu directory.
-        // If you don't have res/menu, just create a directory named "menu" inside res
+        // create an action bar buttons based on res/menu/mymenu
         getMenuInflater().inflate(R.menu.mymenu, menu);
         return super.onCreateOptionsMenu(menu);
     }

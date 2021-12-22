@@ -1,5 +1,7 @@
 package com.isep.spotifilm.activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -10,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -191,6 +195,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         //TODO change color of clicked tv item
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.info) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setView(R.layout.activity_info)
+                    .setPositiveButton("Ok", (dialog, which) -> { })
+                    .show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // create an action bar buttons based on res/menu/mymenu
+        getMenuInflater().inflate(R.menu.mymenu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
 }

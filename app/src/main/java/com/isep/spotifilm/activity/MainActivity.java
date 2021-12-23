@@ -11,17 +11,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.isep.spotifilm.R;
+import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.adapter.MyRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Playlist;
@@ -76,8 +79,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         itemViewList.add(itemView); //to add all the 'list row item' views*/
 
         reqService.getAvailableDevice(() -> { deviceId = reqService.getDeviceId(); System.out.println("DEVICE ID : " + deviceId);});
-
-
 
     }
 

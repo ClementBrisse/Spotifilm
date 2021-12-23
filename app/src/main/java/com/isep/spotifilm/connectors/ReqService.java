@@ -428,7 +428,11 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
-    public Drawable getAlbumIgmCover(String albumId){
+    public String getImgURL(){
+        return imgURL;
+    }
+
+    public void getAlbumIgmCover(String albumId, final IVolleyCallBack callBack){
         songs = new ArrayList<>();
         String endpoint = "https://api.spotify.com/v1/albums/"+albumId;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -438,9 +442,11 @@ public class ReqService {
                         assert jsonArray != null;
                         JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
                         imgURL = object.getString("url");
+                        System.out.println("imgURL - "+imgURL);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error
                 }) {
@@ -455,7 +461,6 @@ public class ReqService {
         };
 
         queue.add(jsonObjectRequest);
-        return Utils.LoadImageFromWebURL(imgURL);
     }
 
 }

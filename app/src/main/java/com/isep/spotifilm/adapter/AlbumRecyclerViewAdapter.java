@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
+import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Song;
@@ -113,7 +114,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             }
             info.append(album.getNumberOfSelectedTracks()).append("/").append(album.getNumberOfTracks());
 
-//            imageView.setBackground(album.getImg());
+            Utils.setImgViewFromURL(imageView, album.getImgURL());
             albumInfo.setText(info.toString());
         }
 

@@ -27,7 +27,7 @@ public class Album {
     String name;
     String id;
     List<String> artists;
-    Drawable img;
+    String imgURL;
 
     boolean expanded; //state of the item in the view
 
@@ -41,20 +41,18 @@ public class Album {
         reqService.getTracksFromAlbum(id, () -> {
             tracks = reqService.getSongs();
         });
-        img = reqService.getAlbumIgmCover(id);
+        reqService.getAlbumIgmCover(id, () -> {
+            imgURL = reqService.getImgURL();
+        });
     }
 
     public void checkSong(String songId){
-        System.out.println("Search : "+songId);
-        System.out.println(tracks.size());
         for (Song song : tracks) {
-            System.out.println("       - " + song.getId());
             if(song.getId().equals(songId)){
                 song.setSelected(Boolean.TRUE);
                 break;
             }
         }
-        System.out.println(songId+" not found in album");
     }
 
     public void uncheckSong(String songId){
@@ -96,8 +94,7 @@ public class Album {
     public List<String> getArtists(){
         return artists;
     }
-
-    public Drawable getImg() {
-        return img;
+    public String getImgURL() {
+        return imgURL;
     }
 }

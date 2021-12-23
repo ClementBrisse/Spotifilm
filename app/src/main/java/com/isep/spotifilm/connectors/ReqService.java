@@ -139,7 +139,6 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println(playlists);
                     callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error
@@ -292,7 +291,6 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println(albums);
                     callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error
@@ -433,7 +431,6 @@ public class ReqService {
     }
 
     public void getAlbumIgmCover(String albumId, final IVolleyCallBack callBack){
-        songs = new ArrayList<>();
         String endpoint = "https://api.spotify.com/v1/albums/"+albumId;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
@@ -442,7 +439,6 @@ public class ReqService {
                         assert jsonArray != null;
                         JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
                         imgURL = object.getString("url");
-                        System.out.println("imgURL - "+imgURL);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -460,6 +456,34 @@ public class ReqService {
             }
         };
 
+        queue.add(jsonObjectRequest);
+    }
+
+    public void getPlaylistIgmCover(String playlistId, final IVolleyCallBack callBack){
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("images");
+                    try {
+                        assert jsonArray != null;
+                        JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
+                        imgURL = object.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
         queue.add(jsonObjectRequest);
     }
 

@@ -1,7 +1,6 @@
 package com.isep.spotifilm.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -11,28 +10,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Adapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.isep.spotifilm.R;
-import com.isep.spotifilm.Utils;
-import com.isep.spotifilm.adapter.MyRecyclerViewAdapter;
+import com.isep.spotifilm.adapter.PlaylistViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Playlist;
 import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
+public class MainActivity extends AppCompatActivity implements PlaylistViewAdapter.ItemClickListener{
 
     private Song song;
 
@@ -45,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
     SharedPreferences sharedPreferences;
 
-    RecyclerView recyclerView;
-    MyRecyclerViewAdapter adapter;
+    static RecyclerView recyclerView;
+    static PlaylistViewAdapter adapter;
 
     FloatingActionButton fabAdd;
     FloatingActionButton fabPlay;
@@ -92,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         // list to populate the RecyclerView with
-        ArrayList<String> playlistNames = new ArrayList<>();
+        ArrayList<Playlist> playlists = new ArrayList<>();
 
-        adapter = new MyRecyclerViewAdapter(this, playlistNames);
+        adapter = new PlaylistViewAdapter(this, playlists);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -108,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
             for (Playlist p : userPlaylist) {
                 String playlistName = p.getName();
                 if (playlistName.contains("Spotifilm_")){
-                    playlistNames.add(playlistName);
+                    playlists.add(p);
                     adapter.notifyItemInserted(adapter.getItemCount()-1);
                     userPlaylistCount++;
                 }
@@ -118,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
                 tvNoPlaylist.setText("No Spotifilm playlist. Create one withe the (+) button ");
             }
         });
-
     }
 
     private void initBtnListener() {

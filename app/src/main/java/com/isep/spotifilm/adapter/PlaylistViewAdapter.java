@@ -4,24 +4,28 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.R;
+import com.isep.spotifilm.Utils;
+import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Playlist;
 
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder> {
 
-    private List<String> mData;
+    private List<Playlist> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
 
     // data is passed into the constructor
-    public MyRecyclerViewAdapter(Context context, List<String> data) {
+    public PlaylistViewAdapter(Context context, List<Playlist> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -36,9 +40,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String playlistName = mData.get(position);
-        holder.myTextView.setText(playlistName);
-
+        Playlist playlist = mData.get(position);
+        Utils.setImgViewFromURL(holder.imageView, playlist.getImgURL());
+        holder.myTextView.setText(playlist.getName());
         holder.itemView.setSelected(selectedPos == position);
     }
 
@@ -52,10 +56,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        ImageView imageView;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.tvPlaylist);
+            imageView = itemView.findViewById(R.id.imageView);
+
             itemView.setOnClickListener(this);
         }
 
@@ -69,7 +76,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     // convenience method for getting data at click position
-    public String getItem(int id) {
+    public Playlist getItem(int id) {
         return mData.get(id);
     }
 

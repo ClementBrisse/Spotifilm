@@ -1,33 +1,22 @@
 package com.isep.spotifilm.object;
 
-import android.graphics.drawable.Drawable;
-import android.os.Debug;
-import android.widget.TextView;
-
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.isep.spotifilm.MyApplication;
-import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Album {
 
     List<Song> tracks = new ArrayList<>();
-    String name;
     String id;
+    String name;
     List<String> artists;
     String imgURL;
+
+    boolean isSelected = true; //true if getNumberOfSelectedTracks >0
+    private AlbumRecyclerViewAdapter.ViewHolder holder;
 
     boolean expanded; //state of the item in the view
 
@@ -38,12 +27,8 @@ public class Album {
 
         //init all music from album to the status "not in the playlist"
         ReqService reqService = new ReqService(MyApplication.getContext());
-        reqService.getTracksFromAlbum(id, () -> {
-            tracks = reqService.getSongs();
-        });
-        reqService.getAlbumIgmCover(id, () -> {
-            imgURL = reqService.getImgURL();
-        });
+        reqService.getTracksFromAlbum(this, () -> tracks = reqService.getSongs());
+        reqService.getAlbumIgmCover(id, () -> imgURL = reqService.getImgURL());
     }
 
     public void checkSong(String songId){
@@ -55,13 +40,11 @@ public class Album {
         }
     }
 
-    public void uncheckSong(String songId){
+    public void checkAllSongs(boolean isCheck){
         for (Song song : tracks) {
-            if(song.getId().equals(songId)){
-                song.setSelected(Boolean.FALSE);
-                break;
-            }
+            song.setSelected(isCheck);
         }
+        isSelected = getNumberOfSelectedTracks()>0;
     }
 
     public int getNumberOfTracks(){
@@ -69,7 +52,6 @@ public class Album {
     }
 
     public int getNumberOfSelectedTracks(){
-        System.out.println(tracks.toString());
         return (int) tracks.stream().filter(Song::isSelected).count();
     }
 
@@ -85,15 +67,26 @@ public class Album {
         return tracks;
     }
 
+    public void setHolder(AlbumRecyclerViewAdapter.ViewHolder holder){
+        this.holder = holder;
+    }
+
+    public AlbumRecyclerViewAdapter.ViewHolder getHolder(){
+        return holder;
+    }
+
     public boolean isExpanded(){
         return expanded;
     }
+
     public void setExpanded(boolean expanded){
         this.expanded = expanded;
     }
+
     public List<String> getArtists(){
         return artists;
     }
+
     public String getImgURL() {
         return imgURL;
     }

@@ -1,13 +1,12 @@
 package com.isep.spotifilm.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,8 +17,8 @@ import java.util.List;
 
 public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecyclerViewAdapter.ViewHolder> {
 
-    private List<Song> mData;
-    private LayoutInflater mInflater;
+    private final List<Song> mData;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
@@ -31,8 +30,9 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.reciclerview_row_track, parent, false);
         return new ViewHolder(view);
     }
@@ -41,7 +41,11 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Song song = mData.get(position);
+
         holder.myTextView.setText(song.getName());
+
+        song.setHolder(holder);
+        holder.switchTrackIsSelected.setOnClickListener(view -> holder.switchSongIsSelected(song));
         holder.switchTrackIsSelected.setChecked(song.isSelected());
 
         holder.itemView.setSelected(selectedPos == position);
@@ -69,9 +73,14 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            notifyItemChanged(selectedPos);
             selectedPos = getLayoutPosition();
             notifyItemChanged(selectedPos);
+        }
+        public void switchSongIsSelected(Song song){
+            song.changeSelected();
+        }
+        public void updateSwitch(boolean isOn){
+            switchTrackIsSelected.setChecked(isOn);
         }
     }
 

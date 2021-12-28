@@ -1,9 +1,6 @@
 package com.isep.spotifilm.object;
 
-import android.os.Handler;
-
 import com.isep.spotifilm.MyApplication;
-import com.isep.spotifilm.activity.MainActivity;
 import com.isep.spotifilm.connectors.ReqService;
 
 public class Playlist {

@@ -7,19 +7,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.Utils;
-import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
 
 import java.util.List;
 
 public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder> {
 
-    private List<Playlist> mData;
-    private LayoutInflater mInflater;
+    private final List<Playlist> mData;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
@@ -31,8 +31,9 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.recyclerview_row_playlist, parent, false);
         return new ViewHolder(view);
     }

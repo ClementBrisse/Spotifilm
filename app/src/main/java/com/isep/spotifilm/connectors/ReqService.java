@@ -309,9 +309,9 @@ public class ReqService {
         return null;
     }
 
-    public void getTracksFromAlbum(String albumId, final IVolleyCallBack callBack) {
+    public void getTracksFromAlbum(Album album, final IVolleyCallBack callBack) {
         songs = new ArrayList<>();
-        String endpoint = "https://api.spotify.com/v1/albums/"+albumId+"/tracks";
+        String endpoint = "https://api.spotify.com/v1/albums/"+album.getId()+"/tracks";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
                     JSONArray jsonArray =  response.optJSONArray("items");
@@ -320,7 +320,7 @@ public class ReqService {
                             JSONObject object = jsonArray.getJSONObject(n);
                             String trackId = object.getString("id");
                             String trackName = object.getString("name");
-                            Song song = new Song(trackId, trackName, false);
+                            Song song = new Song(album, trackId, trackName, false);
                             songs.add(song);
                         } catch (JSONException e) {
                             e.printStackTrace();

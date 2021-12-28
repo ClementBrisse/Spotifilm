@@ -1,8 +1,8 @@
 package com.isep.spotifilm.object;
 
 public class Song {
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
     private boolean isSelected;
 
     public Song(String id, String name, boolean isSelected) {

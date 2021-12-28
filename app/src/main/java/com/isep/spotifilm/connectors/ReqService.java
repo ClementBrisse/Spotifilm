@@ -2,9 +2,6 @@ package com.isep.spotifilm.connectors;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-
-import androidx.annotation.DoNotInline;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -21,8 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,11 +118,10 @@ public class ReqService {
         return playlists;
     }
 
-    public ArrayList<Playlist> getUserPlaylists(final IVolleyCallBack callBack) {
+    public void getUserPlaylists(final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/me/playlists";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
-                    Gson gson = new Gson();
                     JSONArray jsonArray = response.optJSONArray("items");
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
@@ -154,7 +148,6 @@ public class ReqService {
             }
         };
         queue.add(jsonObjectRequest);
-        return playlists;
     }
 
     public void putSongLiked(Song song) {

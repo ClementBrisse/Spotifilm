@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,6 +78,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         TextView albumInfo;
         LinearLayout subItem;
         ImageView imageView;
+        SwitchCompat switchAlbumIsSelected;
 
         RecyclerView trackRecyclerView;
         TrackRecyclerViewAdapter adapter;
@@ -88,6 +90,8 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             trackRecyclerView = itemView.findViewById(R.id.rvTrack);
             subItem = itemView.findViewById(R.id.subItem);
             imageView = itemView.findViewById(R.id.imageView);
+            switchAlbumIsSelected = itemView.findViewById(R.id.switchAlbumIsSelected);
+            switchAlbumIsSelected.setChecked(true);
 
             itemView.setOnClickListener(this);
         }

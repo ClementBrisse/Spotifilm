@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:theme="@style/Theme.AppCompat.DayNight"
     android:orientation="vertical">
 
     <LinearLayout
@@ -38,12 +39,11 @@
                 tools:text="By hanz zimmer, 2/10 tracks" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="20dp"
-            app:srcCompat="@android:drawable/checkbox_on_background" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchAlbumIsSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

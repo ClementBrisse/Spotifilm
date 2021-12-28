@@ -1,11 +1,14 @@
 package com.isep.spotifilm.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.R;
@@ -37,8 +40,9 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Song playlistName = mData.get(position);
-        holder.myTextView.setText(playlistName.getName());
+        Song song = mData.get(position);
+        holder.myTextView.setText(song.getName());
+        holder.switchTrackIsSelected.setChecked(song.isSelected());
 
         holder.itemView.setSelected(selectedPos == position);
     }
@@ -53,10 +57,12 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        SwitchCompat switchTrackIsSelected;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.tvTrackName);
+            switchTrackIsSelected = itemView.findViewById(R.id.switchTrackIsSelected);
             itemView.setOnClickListener(this);
         }
 

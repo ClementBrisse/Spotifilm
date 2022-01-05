@@ -67,6 +67,16 @@ public class Album {
         return tracks;
     }
 
+    public List<Song> getSelectedTracks(){
+        List<Song> selectedTracks = new ArrayList<>();
+        for(Song s : tracks){
+            if(s.isSelected()){
+                selectedTracks.add(s);
+            }
+        }
+        return tracks;
+    }
+
     public void setHolder(AlbumRecyclerViewAdapter.ViewHolder holder){
         this.holder = holder;
     }

@@ -465,7 +465,7 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
-    public void putUnfollowPlaylist(String playlistId){
+    public void deleteUnfollowPlaylist(String playlistId){
         String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId+"/followers";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, null, response -> {
         }, error -> {
@@ -483,6 +483,76 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
+    public void deleteTracksFromPlaylist(ArrayList<Song> songsToRemove, String playlistId){
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId+"/tracks";
+        //preparePutPayload
+        JSONArray idarray = new JSONArray();
+        JSONObject entry;
+        for(Song s : songsToRemove){
+            entry = new JSONObject();
+            try {
+                entry.put("uri", "spotify:track:"+s.getId());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            idarray.put(entry);
+        }
+
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("tracks", idarray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(payload);
+        //request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, null, response -> {
+            System.out.println("yo");
+        }, error -> {
+            System.out.println(error.getMessage());
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                System.out.println(auth);
+                headers.put("Authorization", auth);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        System.out.println(jsonObjectRequest.toString());
+        queue.add(jsonObjectRequest);
+    }
+
+    public void addTracksToPlaylist(ArrayList<Song> songsToAdd, String playlistId, final IVolleyCallBack callBack) {
+        String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
+        Map<String,String> params = new HashMap<>();
+        String uris = "";
+        for(Song s : songsToAdd){
+            uris+="spotify:track:"+s.getId()+",";
+        }
+        params.put("uris", uris);
+
+        JSONObject parameters = new JSONObject(params);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest (Request.Method.POST, endpoint, parameters, response -> {
+                    System.out.println("hello");
+                    callBack.onSuccess();
+                }, error -> {
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+        queue.add(jsonObjectRequest);
+    }
 
 
 }

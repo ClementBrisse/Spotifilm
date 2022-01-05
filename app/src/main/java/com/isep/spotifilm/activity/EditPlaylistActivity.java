@@ -24,6 +24,7 @@ import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 
@@ -108,8 +109,8 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     }
 
     private void savePlaylist() {
-        //TODO
-        Toast.makeText(this, "TODO : save playlist", Toast.LENGTH_SHORT).show();
+        emptyPlaylist();
+        //TODO refill
     }
 
     private void addAlbum() {
@@ -121,13 +122,31 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         new AlertDialog.Builder(EditPlaylistActivity.this)
                 .setView(R.layout.activity_edit_delete)
                 .setPositiveButton("Ok", (dialog, which) -> {
-                    reqService.putUnfollowPlaylist(playlistId);
+                    reqService.deleteUnfollowPlaylist(playlistId);
                     Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);
                     EditPlaylistActivity.this.startActivity(myIntent);
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> { })
                 .show();
     }
+
+    private void emptyPlaylist(){
+        ArrayList<Song> songsToRemove = new ArrayList<>();
+        for (Album a : albumList){
+            songsToRemove.addAll(a.getTracks());
+        }
+//        reqService.deleteTracksFromPlaylist(songsToRemove, playlistId);
+        ArrayList<Song> songsSelected = new ArrayList<>();
+        for (Album a : albumList){
+            songsToRemove.addAll(a.getSelectedTracks());
+        }
+        reqService.addTracksToPlaylist(songsSelected, playlistId, () -> {
+            Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);
+            EditPlaylistActivity.this.startActivity(myIntent);
+        });
+    }
+
+
 
     @Override
     public void onItemClick(View view, int position) {
@@ -155,6 +174,5 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         getMenuInflater().inflate(R.menu.mymenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 
 }

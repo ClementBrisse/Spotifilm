@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
     private ReqService reqService;
     private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
     private ArrayList<Playlist> userPlaylist = new ArrayList<>();
-    public String playlistIdSelected = ""; //TODO !!! check that a playlist was clicked before a fab button is used
+    public String playlistIdSelected = "";
     public String playlistNameSelected = "";
     public String deviceId;
 

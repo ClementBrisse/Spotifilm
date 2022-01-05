@@ -38,6 +38,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
 
     FloatingActionButton fabAdd;
     FloatingActionButton fabSave;
+    FloatingActionButton fabDel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         playlistNameTv.setText(playlistName);
         fabAdd = findViewById(R.id.fabAdd);
         fabSave = findViewById(R.id.fabSave);
+        fabDel = findViewById(R.id.fabDel);
 
         initBtnListener();
 
@@ -102,6 +104,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     private void initBtnListener() {
         fabAdd.setOnClickListener(view -> addAlbum());
         fabSave.setOnClickListener(view -> savePlaylist());
+        fabDel.setOnClickListener(view -> unfollowPlaylist());
     }
 
     private void savePlaylist() {
@@ -112,6 +115,18 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     private void addAlbum() {
         //TODO
         Toast.makeText(this, "TODO : add album", Toast.LENGTH_SHORT).show();
+    }
+
+    private void unfollowPlaylist() {
+        new AlertDialog.Builder(EditPlaylistActivity.this)
+                .setView(R.layout.activity_edit_delete)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    reqService.putUnfollowPlaylist(playlistId);
+                    Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);
+                    EditPlaylistActivity.this.startActivity(myIntent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> { })
+                .show();
     }
 
     @Override

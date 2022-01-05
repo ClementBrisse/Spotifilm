@@ -63,8 +63,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
-
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -98,8 +96,6 @@ public class ReqService {
 
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
-
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -135,8 +131,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
-
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -199,8 +193,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
-
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -244,7 +236,6 @@ public class ReqService {
                     }
                     checkSelectedSongInAlbum(playlistId, callBack);
                 }, error -> {
-                    // TODO: Handle error
                 }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -286,7 +277,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
                 }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -328,7 +318,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
                 }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -385,8 +374,6 @@ public class ReqService {
                         e.printStackTrace();
                     }
                 }, error -> {
-                    // TODO: Handle error
-
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -437,7 +424,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
                 }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -466,7 +452,6 @@ public class ReqService {
                     }
                     callBack.onSuccess();
                 }, error -> {
-                    // TODO: Handle error
                 }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -479,5 +464,25 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
     }
+
+    public void putUnfollowPlaylist(String playlistId){
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId+"/followers";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, null, response -> {
+        }, error -> {
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+
 
 }

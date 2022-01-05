@@ -3,8 +3,6 @@ package com.isep.spotifilm.connectors;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.DoNotInline;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,6 +33,7 @@ public class ReqService {
     private RequestQueue queue;
     private String availableDeviceId;
     private boolean isPlayerPlaying;
+    private String imgURL ="";
 
     public ReqService(Context context) {
         sharedPreferences = context.getSharedPreferences("SPOTIFY", 0);
@@ -119,11 +118,10 @@ public class ReqService {
         return playlists;
     }
 
-    public ArrayList<Playlist> getUserPlaylists(final IVolleyCallBack callBack) {
+    public void getUserPlaylists(final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/me/playlists";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
-                    Gson gson = new Gson();
                     JSONArray jsonArray = response.optJSONArray("items");
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
@@ -135,7 +133,6 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println(playlists);
                     callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error
@@ -151,7 +148,6 @@ public class ReqService {
             }
         };
         queue.add(jsonObjectRequest);
-        return playlists;
     }
 
     public void putSongLiked(Song song) {
@@ -288,7 +284,6 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println(albums);
                     callBack.onSuccess();
                 }, error -> {
                     // TODO: Handle error
@@ -314,9 +309,9 @@ public class ReqService {
         return null;
     }
 
-    public void getTracksFromAlbum(String albumId, final IVolleyCallBack callBack) {
+    public void getTracksFromAlbum(Album album, final IVolleyCallBack callBack) {
         songs = new ArrayList<>();
-        String endpoint = "https://api.spotify.com/v1/albums/"+albumId+"/tracks";
+        String endpoint = "https://api.spotify.com/v1/albums/"+album.getId()+"/tracks";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
                     JSONArray jsonArray =  response.optJSONArray("items");
@@ -325,7 +320,7 @@ public class ReqService {
                             JSONObject object = jsonArray.getJSONObject(n);
                             String trackId = object.getString("id");
                             String trackName = object.getString("name");
-                            Song song = new Song(trackId, trackName, false);
+                            Song song = new Song(album, trackId, trackName, false);
                             songs.add(song);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -423,4 +418,66 @@ public class ReqService {
         };
         queue.add(jsonObjectRequest);
     }
+
+    public String getImgURL(){
+        return imgURL;
+    }
+
+    public void getAlbumIgmCover(String albumId, final IVolleyCallBack callBack){
+        String endpoint = "https://api.spotify.com/v1/albums/"+albumId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("images");
+                    try {
+                        assert jsonArray != null;
+                        JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
+                        imgURL = object.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+    }
+
+    public void getPlaylistIgmCover(String playlistId, final IVolleyCallBack callBack){
+        String endpoint = "https://api.spotify.com/v1/playlists/"+playlistId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, response -> {
+                    JSONArray jsonArray =  response.optJSONArray("images");
+                    try {
+                        assert jsonArray != null;
+                        JSONObject object = jsonArray.getJSONObject(jsonArray.length()-1);
+                        imgURL = object.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callBack.onSuccess();
+                }, error -> {
+                    // TODO: Handle error
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
 }

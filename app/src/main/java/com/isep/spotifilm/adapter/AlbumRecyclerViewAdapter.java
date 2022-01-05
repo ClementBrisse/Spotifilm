@@ -1,31 +1,31 @@
 package com.isep.spotifilm.adapter;
 
 import android.content.Context;
-import android.graphics.Movie;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
-import com.isep.spotifilm.connectors.ReqService;
+import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Album;
-import com.isep.spotifilm.object.Song;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
 
-    private List<Album> mData;
-    private LayoutInflater mInflater;
+    private final List<Album> mData;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
@@ -37,8 +37,9 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.recyclerview_row_album, parent, false);
         return new ViewHolder(view);
     }
@@ -48,8 +49,11 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     public void onBindViewHolder(ViewHolder holder, int position) {
         Album album = mData.get(position);
         holder.bind(album);
+        album.setHolder(holder);
 
         holder.itemView.setSelected(selectedPos == position);
+        holder.switchAlbumIsSelected.setOnClickListener(view -> holder.switchAlbumIsSelected(album));
+        holder.switchAlbumIsSelected.setChecked(album.getNumberOfSelectedTracks()>0);
 
         holder.itemView.setOnClickListener(v -> {
             // Get the current state of the item
@@ -74,6 +78,8 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         TextView albumTitle;
         TextView albumInfo;
         LinearLayout subItem;
+        ImageView imageView;
+        SwitchCompat switchAlbumIsSelected;
 
         RecyclerView trackRecyclerView;
         TrackRecyclerViewAdapter adapter;
@@ -84,7 +90,10 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             albumInfo = itemView.findViewById(R.id.albumInfo);
             trackRecyclerView = itemView.findViewById(R.id.rvTrack);
             subItem = itemView.findViewById(R.id.subItem);
+            imageView = itemView.findViewById(R.id.imageView);
+            switchAlbumIsSelected = itemView.findViewById(R.id.switchAlbumIsSelected);
 
+            switchAlbumIsSelected.setChecked(true);
             itemView.setOnClickListener(this);
         }
 
@@ -96,13 +105,11 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             notifyItemChanged(selectedPos);
         }
 
-        public void bind(Album album) {
-            // Get the state
-            boolean expanded = album.isExpanded();
-            // Set the visibility based on state
-            subItem.setVisibility(expanded ? View.VISIBLE : View.GONE);
-            intiSubItemRV(album);
+        public void switchAlbumIsSelected(Album album){
+            album.checkAllSongs(switchAlbumIsSelected.isChecked());
+        }
 
+        public void updateUI(Album album){
             albumTitle.setText(album.getName());
             StringBuilder info = new StringBuilder();
             for(String artist : album.getArtists()){
@@ -110,7 +117,20 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             }
             info.append(album.getNumberOfSelectedTracks()).append("/").append(album.getNumberOfTracks());
 
+            Utils.setImgViewFromURL(imageView, album.getImgURL());
             albumInfo.setText(info.toString());
+
+            switchAlbumIsSelected.setChecked(album.getNumberOfSelectedTracks()>0);
+        }
+
+        public void bind(Album album) {
+            // Get the state
+            boolean expanded = album.isExpanded();
+            // Set the visibility based on state
+            subItem.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            intiSubItemRV(album);
+
+            updateUI(album);
         }
 
         private void intiSubItemRV(Album album){

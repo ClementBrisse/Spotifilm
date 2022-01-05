@@ -1,17 +1,25 @@
 package com.isep.spotifilm.activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
@@ -24,7 +32,6 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     private ReqService reqService;
     private ArrayList<Album> albumList = new ArrayList<>();
     private  String playlistId;
-    private  String playlistName;
 
     RecyclerView recyclerViewAlbum;
     AlbumRecyclerViewAdapter adapter;
@@ -39,7 +46,11 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
 
         Intent intent = getIntent();
         playlistId = intent.getStringExtra("playlistId");
-        playlistName = intent.getStringExtra("playlistName");
+        String playlistName = intent.getStringExtra("playlistName");
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         reqService = new ReqService(getApplicationContext());
 
@@ -72,7 +83,6 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         recyclerViewAlbum.setAdapter(adapter);
 
         //request to get all album from selected playlist en populate recycler view with it
-//        String playlistId = "4jukwl4yO2gi2jexDdpCAh";
         reqService.getAlbumsFromPlaylist(playlistId, () -> {
             albumList = reqService.getAlbums();
             int albumsCount = 0;
@@ -107,7 +117,29 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.info) {
+            new AlertDialog.Builder(EditPlaylistActivity.this)
+                    .setView(R.layout.activity_info)
+                    .setPositiveButton("Ok", (dialog, which) -> { })
+                    .show();
+        } else {
+            //if not info then it's the back button
+            Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);
+            EditPlaylistActivity.this.startActivity(myIntent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // create an action bar buttons based on res/menu/mymenu
+        getMenuInflater().inflate(R.menu.mymenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
 }

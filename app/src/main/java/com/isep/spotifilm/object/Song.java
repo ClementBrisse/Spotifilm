@@ -1,11 +1,17 @@
 package com.isep.spotifilm.object;
 
-public class Song {
-    private String id;
-    private String name;
-    private boolean isSelected;
+import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
+import com.isep.spotifilm.adapter.TrackRecyclerViewAdapter;
 
-    public Song(String id, String name, boolean isSelected) {
+public class Song {
+    private final Album album;
+    private final String id;
+    private final String name;
+    private boolean isSelected;
+    private TrackRecyclerViewAdapter.ViewHolder holder;
+
+    public Song(Album album, String id, String name, boolean isSelected) {
+        this.album = album;
         this.name = name;
         this.id = id;
         this.isSelected = isSelected;
@@ -23,7 +29,27 @@ public class Song {
         return isSelected;
     }
 
+    public void setHolder(TrackRecyclerViewAdapter.ViewHolder holder){
+        this.holder = holder;
+    }
+
+    public void changeSelected() {
+        isSelected = !isSelected;
+        updateSwitches();
+    }
+
     public void setSelected(boolean selected) {
         isSelected = selected;
+        updateSwitches();
+    }
+
+    private void updateSwitches(){
+        if(holder!=null){
+            holder.updateSwitch(isSelected);
+        }
+        AlbumRecyclerViewAdapter.ViewHolder albumHolder = album.getHolder();
+        if(albumHolder!=null){
+            albumHolder.updateUI(album);
+        }
     }
 }

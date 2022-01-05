@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.R;
@@ -15,8 +17,8 @@ import java.util.List;
 
 public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecyclerViewAdapter.ViewHolder> {
 
-    private List<Song> mData;
-    private LayoutInflater mInflater;
+    private final List<Song> mData;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     private int selectedPos = RecyclerView.NO_POSITION;
@@ -28,8 +30,9 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.reciclerview_row_track, parent, false);
         return new ViewHolder(view);
     }
@@ -37,8 +40,13 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Song playlistName = mData.get(position);
-        holder.myTextView.setText(playlistName.getName());
+        Song song = mData.get(position);
+
+        holder.myTextView.setText(song.getName());
+
+        song.setHolder(holder);
+        holder.switchTrackIsSelected.setOnClickListener(view -> holder.switchSongIsSelected(song));
+        holder.switchTrackIsSelected.setChecked(song.isSelected());
 
         holder.itemView.setSelected(selectedPos == position);
     }
@@ -53,19 +61,26 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        SwitchCompat switchTrackIsSelected;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.tvTrackName);
+            switchTrackIsSelected = itemView.findViewById(R.id.switchTrackIsSelected);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            notifyItemChanged(selectedPos);
             selectedPos = getLayoutPosition();
             notifyItemChanged(selectedPos);
+        }
+        public void switchSongIsSelected(Song song){
+            song.changeSelected();
+        }
+        public void updateSwitch(boolean isOn){
+            switchTrackIsSelected.setChecked(isOn);
         }
     }
 

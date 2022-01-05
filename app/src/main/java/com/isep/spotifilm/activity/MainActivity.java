@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -193,10 +194,15 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         //TODO select playlist
         playlistIdSelected = userPlaylist.get(position).getId();
         playlistNameSelected = userPlaylist.get(position).getName();
-        Toast.makeText(this, "You selected " + userPlaylist.get(position).getName() + " of id : " + userPlaylist.get(position).getId(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You selected " + userPlaylist.get(position).getName(), Toast.LENGTH_SHORT).show();
 
         //TODO change color of clicked tv item
-
+        String slectedColor = "#1DB954";
+        String defaultColor = "#FFFFFF";
+        for (int i = 0; i < recyclerView.getChildCount(); i++) {
+            recyclerView.getChildAt(i).setBackgroundColor(Color.parseColor(defaultColor));
+        }
+        recyclerView.getChildAt(position).setBackgroundColor(Color.parseColor(slectedColor));
     }
 
     @Override

@@ -7,9 +7,12 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
@@ -474,36 +477,29 @@ public class ReqService {
 
     public void deleteTracksFromPlaylist(ArrayList<Song> songsToRemove, String playlistId) {
         String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-        //preparePutPayload
-        JSONArray idarray = new JSONArray();
-        JSONObject entry;
-        for (Song s : songsToRemove) {
-            entry = new JSONObject();
-            try {
-                entry.put("uri", "spotify:track:" + s.getId());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            idarray.put(entry);
-        }
 
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("tracks", idarray);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        List< Map<String, String>> tracks = new ArrayList<>();
+        Map<String, String> track ;
+        System.out.println(songsToRemove);
+        for (Song s : songsToRemove) {
+            track = new HashMap<>();
+            track.put("uri", "spotify:track:" + s.getId());
+            tracks.add(track);
         }
-        System.out.println(payload);
+        Map<String, List> params = new HashMap<>();
+        params.put("tracks", tracks);
+
+        JSONObject parameters = new JSONObject(params);
+        System.out.println(parameters);
+
         //request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, null, response -> {
-            System.out.println("yo");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, parameters, response -> {
         }, this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
-                System.out.println(auth);
                 headers.put("Authorization", auth);
                 headers.put("Content-Type", "application/json");
                 return headers;
@@ -514,21 +510,19 @@ public class ReqService {
     }
 
     public void addTracksToPlaylist(ArrayList<Song> songsToAdd, String playlistId, final IVolleyCallBack callBack) {
-        String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-        Map<String, String> params = new HashMap<>();
-        String uris = "";
+        String uris = "" ;
         for (Song s : songsToAdd) {
             uris += "spotify:track:" + s.getId() + ",";
         }
-        params.put("uris", uris);
-
+        String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks?uris="+uris;
+        Map<String, String> params = new HashMap<>();
+        params.put("uris", "");
         JSONObject parameters = new JSONObject(params);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, endpoint, parameters, response -> {
-            System.out.println("hello");
-            callBack.onSuccess();
-        }, this::handleError) {
+        System.out.println(parameters.toString());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, endpoint, null, response -> callBack.onSuccess(), this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -550,7 +544,6 @@ public class ReqService {
         try {
             body = new String(error.networkResponse.data, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // exception
         }
         System.out.println("Error " + statusCode);
         System.out.println(body);

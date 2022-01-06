@@ -74,7 +74,7 @@ public class Album {
                 selectedTracks.add(s);
             }
         }
-        return tracks;
+        return selectedTracks;
     }
 
     public void setHolder(AlbumRecyclerViewAdapter.ViewHolder holder){

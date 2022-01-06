@@ -109,8 +109,9 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     }
 
     private void savePlaylist() {
-        emptyPlaylist();
-        //TODO refill
+//        emptyPlaylist();
+        //TODO
+        fillPlaylist();
     }
 
     private void addAlbum() {
@@ -135,10 +136,15 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         for (Album a : albumList){
             songsToRemove.addAll(a.getTracks());
         }
-//        reqService.deleteTracksFromPlaylist(songsToRemove, playlistId);
+        reqService.deleteTracksFromPlaylist(songsToRemove, playlistId);
+    }
+    private  void fillPlaylist(){
         ArrayList<Song> songsSelected = new ArrayList<>();
         for (Album a : albumList){
-            songsToRemove.addAll(a.getSelectedTracks());
+            songsSelected.addAll(a.getSelectedTracks());
+        }
+        if(songsSelected.size() == 0){
+            return;
         }
         reqService.addTracksToPlaylist(songsSelected, playlistId, () -> {
             Intent myIntent = new Intent(EditPlaylistActivity.this, MainActivity.class);

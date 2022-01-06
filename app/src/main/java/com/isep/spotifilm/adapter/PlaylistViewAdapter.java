@@ -1,7 +1,9 @@
 package com.isep.spotifilm.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,7 +74,7 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
             notifyItemChanged(selectedPos);
             selectedPos = getLayoutPosition();
-            notifyItemChanged(selectedPos);
+            //notifyItemChanged(selectedPos);
         }
     }
 

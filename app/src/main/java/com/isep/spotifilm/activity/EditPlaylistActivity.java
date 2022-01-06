@@ -8,18 +8,16 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.isep.spotifilm.MyApplication;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
@@ -32,7 +30,9 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
 
     private ReqService reqService;
     private ArrayList<Album> albumList = new ArrayList<>();
-    private  String playlistId;
+    private String playlistId;
+    private String playlistName;
+    private String playlistDescription;
 
     RecyclerView recyclerViewAlbum;
     AlbumRecyclerViewAdapter adapter;
@@ -48,7 +48,8 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
 
         Intent intent = getIntent();
         playlistId = intent.getStringExtra("playlistId");
-        String playlistName = intent.getStringExtra("playlistName");
+        playlistName = intent.getStringExtra("playlistName");
+        playlistDescription = intent.getStringExtra("playlistDescription");
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -108,12 +109,6 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
         fabDel.setOnClickListener(view -> unfollowPlaylist());
     }
 
-    private void savePlaylist() {
-//        emptyPlaylist();
-        //TODO
-        fillPlaylist();
-    }
-
     private void addAlbum() {
         //TODO
         Toast.makeText(this, "TODO : add album", Toast.LENGTH_SHORT).show();
@@ -131,12 +126,18 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
                 .show();
     }
 
-    private void emptyPlaylist(){
-        ArrayList<Song> songsToRemove = new ArrayList<>();
-        for (Album a : albumList){
-            songsToRemove.addAll(a.getTracks());
-        }
-        reqService.deleteTracksFromPlaylist(songsToRemove, playlistId);
+    private void savePlaylist(){
+        //delete the playlist and create another
+        //as volley does not support delete request with body (used for track deletion from playlist)
+        reqService.deleteUnfollowPlaylist(playlistId);
+        SharedPreferences  sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
+        reqService.createNewPlaylist(sharedPreferences.getString("userid", ""), playlistName, playlistDescription, () -> {
+            playlistId = reqService.getCreatedPlaylist().getId();
+            playlistName = reqService.getCreatedPlaylist().getName();
+            playlistDescription = reqService.getCreatedPlaylist().getDescription();
+            fillPlaylist();
+        });
+
     }
     private  void fillPlaylist(){
         ArrayList<Song> songsSelected = new ArrayList<>();

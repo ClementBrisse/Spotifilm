@@ -7,12 +7,9 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
@@ -22,7 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +122,7 @@ public class ReqService {
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
-                            Playlist playlist = new Playlist(object.getString("id"), object.getString("name"));
+                            Playlist playlist = new Playlist(object.getString("id"), object.getString("name"),object.getString("description"));
                             playlists.add(playlist);
 
                         } catch (JSONException e) {
@@ -180,7 +177,7 @@ public class ReqService {
         String endpoint = "https://api.spotify.com/v1/users/" + userID + "/playlists";
 
         Map<String, String> params = new HashMap<>();
-        params.put("name", "Spotifilm_" + playlistName);
+        params.put("name", playlistName);
         params.put("description", playlistDescription);
         params.put("public", "false");
 
@@ -188,7 +185,7 @@ public class ReqService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, endpoint, parameters, response -> {
                     try {
-                        createdPlaylist = new Playlist(response.getString("id"), response.getString("name"));
+                        createdPlaylist = new Playlist(response.getString("id"), response.getString("name"), response.getString("description"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -475,50 +472,12 @@ public class ReqService {
         queue.add(jsonObjectRequest);
     }
 
-    public void deleteTracksFromPlaylist(ArrayList<Song> songsToRemove, String playlistId) {
-        String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-
-        List< Map<String, String>> tracks = new ArrayList<>();
-        Map<String, String> track ;
-        System.out.println(songsToRemove);
-        for (Song s : songsToRemove) {
-            track = new HashMap<>();
-            track.put("uri", "spotify:track:" + s.getId());
-            tracks.add(track);
-        }
-        Map<String, List> params = new HashMap<>();
-        params.put("tracks", tracks);
-
-        JSONObject parameters = new JSONObject(params);
-        System.out.println(parameters);
-
-        //request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, endpoint, parameters, response -> {
-        }, this::handleError) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                String token = sharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-        System.out.println(jsonObjectRequest.toString());
-        queue.add(jsonObjectRequest);
-    }
-
     public void addTracksToPlaylist(ArrayList<Song> songsToAdd, String playlistId, final IVolleyCallBack callBack) {
-        String uris = "" ;
+        StringBuilder uris = new StringBuilder();
         for (Song s : songsToAdd) {
-            uris += "spotify:track:" + s.getId() + ",";
+            uris.append("spotify:track:").append(s.getId()).append(",");
         }
         String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks?uris="+uris;
-        Map<String, String> params = new HashMap<>();
-        params.put("uris", "");
-        JSONObject parameters = new JSONObject(params);
-        System.out.println(parameters.toString());
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, endpoint, null, response -> callBack.onSuccess(), this::handleError) {
             @Override
@@ -537,14 +496,11 @@ public class ReqService {
         if (error == null || error.networkResponse == null) {
             return;
         }
-        String body = "";
+        String body;
         //get status code here
         final String statusCode = String.valueOf(error.networkResponse.statusCode);
         //get response body and parse with appropriate encoding
-        try {
-            body = new String(error.networkResponse.data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-        }
+        body = new String(error.networkResponse.data, StandardCharsets.UTF_8);
         System.out.println("Error " + statusCode);
         System.out.println(body);
     }

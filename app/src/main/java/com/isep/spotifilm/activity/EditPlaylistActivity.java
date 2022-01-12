@@ -110,8 +110,11 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
     }
 
     private void addAlbum() {
-        //TODO
-        Toast.makeText(this, "TODO : add album", Toast.LENGTH_SHORT).show();
+        Intent myIntent = new Intent(EditPlaylistActivity.this, ResearchActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        EditPlaylistActivity.this.startActivity(myIntent);
     }
 
     private void unfollowPlaylist() {

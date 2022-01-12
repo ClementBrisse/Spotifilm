@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Spotifilm_PlaylistName"
+            android:text="@string/spotifilm_playlistname"
             android:textSize="30sp" />
 
         <TextView
@@ -66,7 +66,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:contentDescription="delete"
+            android:contentDescription="@string/delete"
             android:src="@android:drawable/ic_menu_delete" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -76,7 +76,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:contentDescription="add"
+            android:contentDescription="@string/add"
             android:src="@android:drawable/ic_menu_add" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:contentDescription="save"
+            android:contentDescription="@string/save"
             app:srcCompat="@android:drawable/ic_menu_save" />
 
 

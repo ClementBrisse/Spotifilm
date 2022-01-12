@@ -159,22 +159,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         });
     }
 
-    private void getRecentlyPlayed() {
-        reqService.getRecentlyPlayedTracks(() -> {
-            recentlyPlayedTracks = reqService.getSongs();
-            if (recentlyPlayedTracks.size() > 0) {
-                song = recentlyPlayedTracks.get(0);
-            }
-        });
-    }
-
-    private void putSongLiked() {
-        reqService.putSongLiked(this.song);
-        if (recentlyPlayedTracks.size() > 0) {
-            recentlyPlayedTracks.remove(0);
-        }
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         //select playlist

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:hint="Dune..."
+        android:hint="@string/dune"
         android:imeOptions="actionSearch"
         android:importantForAutofill="no" />
 
@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="proposition 1"
+            android:contentDescription="@string/proposition_1"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="proposition 2"
+            android:contentDescription="@string/proposition_2"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="proposition 3"
+            android:contentDescription="@string/proposition_3"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

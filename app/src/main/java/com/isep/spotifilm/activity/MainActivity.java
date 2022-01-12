@@ -66,10 +66,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         recyclerView = findViewById(R.id.rvPlaylists);
         initUserPlaylist();
 
-        //change color of selected playlist
-        /*final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row, parent, false);
-        itemViewList.add(itemView); //to add all the 'list row item' views*/
-
         reqService.getAvailableDevice(() -> {
             deviceId = reqService.getDeviceId();
             System.out.println("DEVICE ID : " + deviceId);
@@ -182,12 +178,12 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
 
     @Override
     public void onItemClick(View view, int position) {
-        //TODO select playlist
+        //select playlist
         playlistIdSelected = userPlaylist.get(position).getId();
         playlistNameSelected = userPlaylist.get(position).getName();
         Toast.makeText(this, "You selected " + userPlaylist.get(position).getName(), Toast.LENGTH_SHORT).show();
 
-        //TODO change color of clicked tv item
+        //change color of clicked tv item
         String slectedColor = "#1DB954";
         String defaultColor = "#FFFFFF";
         for (int i = 0; i < recyclerView.getChildCount(); i++) {

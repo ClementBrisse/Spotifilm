@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import com.isep.spotifilm.R;
 import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 
@@ -79,17 +81,17 @@ public class ResearchActivity extends AppCompatActivity {
 
     private void performSearch(){
         reqService.getSearch(String.valueOf(editTxt.getText()), ()->{
-            ArrayList<Album> albums = reqService.getAlbums();
+            albumList = reqService.getAlbums();
             StringBuilder sb1, sb2, sb3;
-            sb1 = new StringBuilder().append(albums.get(0).getName()).append("\n").append(albums.get(0).getArtists()).append("\n").append(albums.get(0).getNumberOfTracks()).append(" tracks");
+            sb1 = new StringBuilder().append(albumList.get(0).getName()).append("\n").append(albumList.get(0).getArtists()).append("\n").append(albumList.get(0).getNumberOfTracks()).append(" tracks");
             tvInfo1.setText(sb1.toString());
-            Utils.setImgViewFromURL(imgProp1, albums.get(0).getImgURL());
-            sb2 = new StringBuilder().append(albums.get(1).getName()).append("\n").append(albums.get(1).getArtists()).append("\n").append(albums.get(1).getNumberOfTracks()).append(" tracks");
+            Utils.setImgViewFromURL(imgProp1, albumList.get(0).getImgURL());
+            sb2 = new StringBuilder().append(albumList.get(1).getName()).append("\n").append(albumList.get(1).getArtists()).append("\n").append(albumList.get(1).getNumberOfTracks()).append(" tracks");
             tvInfo2.setText(sb2.toString());
-            Utils.setImgViewFromURL(imgProp2, albums.get(1).getImgURL());
-            sb3 = new StringBuilder().append(albums.get(2).getName()).append("\n").append(albums.get(2).getArtists()).append("\n").append(albums.get(2).getNumberOfTracks()).append(" tracks");
+            Utils.setImgViewFromURL(imgProp2, albumList.get(1).getImgURL());
+            sb3 = new StringBuilder().append(albumList.get(2).getName()).append("\n").append(albumList.get(2).getArtists()).append("\n").append(albumList.get(2).getNumberOfTracks()).append(" tracks");
             tvInfo3.setText(sb3.toString());
-            Utils.setImgViewFromURL(imgProp3, albums.get(2).getImgURL());
+            Utils.setImgViewFromURL(imgProp3, albumList.get(2).getImgURL());
         });
     }
 
@@ -116,5 +118,32 @@ public class ResearchActivity extends AppCompatActivity {
         // create an action bar buttons based on res/menu/mymenu
         getMenuInflater().inflate(R.menu.mymenu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void addAlbum0ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(0).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
+    }
+
+    public void addAlbum1ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(1).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
+    }
+
+    public void addAlbum2ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(2).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
     }
 }

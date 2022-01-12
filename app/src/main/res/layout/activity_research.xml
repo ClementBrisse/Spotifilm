@@ -21,7 +21,8 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:onClick="addAlbum0ToPlaylist">
 
         <ImageView
             android:id="@+id/imgProp1"
@@ -42,7 +43,8 @@
     <TableRow
         android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:onClick="addAlbum1ToPlaylist">
 
         <ImageView
             android:id="@+id/imgProp2"
@@ -63,7 +65,8 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:onClick="addAlbum2ToPlaylist">
 
         <ImageView
             android:id="@+id/imgProp3"

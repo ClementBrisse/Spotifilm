@@ -122,9 +122,11 @@ public class ReqService {
                     for (int n = 0; n < jsonArray.length(); n++) {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
-                            Playlist playlist = new Playlist(object.getString("id"), object.getString("name"),object.getString("description"));
-                            playlists.add(playlist);
-
+                            String playlistID = object.getString("name");
+                            if(playlistID.contains("Spotifilm_")){
+                                Playlist playlist = new Playlist(object.getString("id"), playlistID,object.getString("description"));
+                                playlists.add(playlist);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -227,11 +229,12 @@ public class ReqService {
                                 album = new Album(albumId, albumName, albumArtists);
                                 albums.add(album);
                             }
+                            checkSelectedSongInAlbum(playlistId);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    checkSelectedSongInAlbum(playlistId, callBack);
+                    callBack.onSuccess();
                 }, this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
@@ -246,7 +249,7 @@ public class ReqService {
 
     }
 
-    private void checkSelectedSongInAlbum(String playlistId, final IVolleyCallBack callBack) {
+    private void checkSelectedSongInAlbum(String playlistId) {
         String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId;
         //check selected song in albums
         //not in the same request as the first one need to end so the albums are populated
@@ -271,7 +274,6 @@ public class ReqService {
                             e.printStackTrace();
                         }
                     }
-                    callBack.onSuccess();
                 }, this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
@@ -403,6 +405,7 @@ public class ReqService {
     }
 
     public void getAlbumIgmCover(String albumId, final IVolleyCallBack callBack) {
+        imgURL = "";
         String endpoint = "https://api.spotify.com/v1/albums/" + albumId;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
@@ -430,6 +433,7 @@ public class ReqService {
     }
 
     public void getPlaylistIgmCover(String playlistId, final IVolleyCallBack callBack) {
+        imgURL="";
         String endpoint = "https://api.spotify.com/v1/playlists/" + playlistId;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {

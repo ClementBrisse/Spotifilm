@@ -29,7 +29,7 @@ import java.util.Objects;
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
     private final ArrayList<Playlist> playlists = new ArrayList<>();
-    private final ArrayList<Album> albums = new ArrayList<>();
+    private ArrayList<Album> albums = new ArrayList<>();
     private Playlist createdPlaylist;
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
@@ -503,5 +503,36 @@ public class ReqService {
         body = new String(error.networkResponse.data, StandardCharsets.UTF_8);
         System.out.println("Error " + statusCode);
         System.out.println(body);
+    }
+
+
+    public void getSearch(String search, final IVolleyCallBack callBack) {
+        albums = new ArrayList<>();
+        String endpoint = "https://api.spotify.com/v1/search?q="+search+"&type=album&limit=3";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest (Request.Method.GET, endpoint, null, response -> {
+            JSONObject jsonObject = response.optJSONObject("albums");
+            JSONArray jsonArray = jsonObject.optJSONArray("items");
+                    for (int n = 0; n < jsonArray.length(); n++) {
+                        try {
+                            JSONObject object = jsonArray.getJSONObject(n);
+                            List<String> albumArtists = Utils.getListOfItemFromJSONArray(object.getJSONArray("artists"), "name");
+                            Album album = new Album(object.getString("id"), object.getString("name"),albumArtists);
+                            albums.add(album);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    callBack.onSuccess();
+                }, this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = sharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
     }
 }

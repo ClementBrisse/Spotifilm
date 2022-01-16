@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.isep.spotifilm.R;
-import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Playlist;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Playlist playlist = mData.get(position);
-        Utils.setImgViewFromURL(holder.imageView, playlist.getImgURL());
+        playlist.setImageView(holder.imageView);
         holder.myTextView.setText(playlist.getName());
         holder.itemView.setSelected(selectedPos == position);
     }

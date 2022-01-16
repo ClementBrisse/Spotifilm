@@ -38,6 +38,7 @@ public class ResearchActivity extends AppCompatActivity {
     TextView tvInfo2;
     ImageView imgProp3;
     TextView tvInfo3;
+    TextView editTxtInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class ResearchActivity extends AppCompatActivity {
         tvInfo2 = findViewById(R.id.tvInfo2);
         imgProp3 = findViewById(R.id.imgProp3);
         tvInfo3 = findViewById(R.id.tvInfo3);
+        editTxtInfo = findViewById(R.id.editTxtInfo);
 
         intiListeners();
     }
@@ -80,8 +82,11 @@ public class ResearchActivity extends AppCompatActivity {
     private void performSearch(){
         reqService.getSearch(String.valueOf(editTxt.getText()), ()->{
             albumList = reqService.getAlbums();
-            if(albumList.size()==0)
+            resetSearch();
+            if(albumList.size()==0){
+                editTxtInfo.setText(R.string.search_no_match);
                 return;
+            }
             albumList.get(0).updateSearchInfos(tvInfo1, imgProp1);
             if(albumList.size()==1)
                 return;
@@ -90,6 +95,16 @@ public class ResearchActivity extends AppCompatActivity {
                 return;
             albumList.get(2).updateSearchInfos(tvInfo3, imgProp3);
         });
+    }
+
+    private void resetSearch(){
+        editTxtInfo.setText(" ");
+        tvInfo1.setText(" ");
+        imgProp1.setImageDrawable(null);
+        tvInfo2.setText(" ");
+        imgProp2.setImageDrawable(null);
+        tvInfo3.setText(" ");
+        imgProp3.setImageDrawable(null);
     }
 
     @Override
@@ -101,11 +116,7 @@ public class ResearchActivity extends AppCompatActivity {
                     .show();
         } else {
             //if not info then it's the back button
-            Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
-            myIntent.putExtra("playlistId", playlistId);
-            myIntent.putExtra("playlistName", playlistName);
-            myIntent.putExtra("playlistDescription", playlistDescription);
-            ResearchActivity.this.startActivity(myIntent);
+            loadEditActivity();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -118,25 +129,27 @@ public class ResearchActivity extends AppCompatActivity {
     }
 
     public void addAlbum0ToPlaylist(View view) {
-        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(0).getTracks(), playlistId, () -> {});
-        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
-        myIntent.putExtra("playlistId", playlistId);
-        myIntent.putExtra("playlistName", playlistName);
-        myIntent.putExtra("playlistDescription", playlistDescription);
-        ResearchActivity.this.startActivity(myIntent);
+        if(albumList.size()>0){
+            reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(0).getTracks(), playlistId, () -> {});
+            loadEditActivity();
+        }
     }
 
     public void addAlbum1ToPlaylist(View view) {
-        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(1).getTracks(), playlistId, () -> {});
-        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
-        myIntent.putExtra("playlistId", playlistId);
-        myIntent.putExtra("playlistName", playlistName);
-        myIntent.putExtra("playlistDescription", playlistDescription);
-        ResearchActivity.this.startActivity(myIntent);
+        if(albumList.size()>1) {
+            reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(1).getTracks(), playlistId, () -> {});
+            loadEditActivity();
+        }
     }
 
     public void addAlbum2ToPlaylist(View view) {
-        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(2).getTracks(), playlistId, () -> {});
+        if(albumList.size()>2) {
+            reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(2).getTracks(), playlistId, () -> {});
+            loadEditActivity();
+        }
+    }
+
+    private void loadEditActivity() {
         Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
         myIntent.putExtra("playlistId", playlistId);
         myIntent.putExtra("playlistName", playlistName);

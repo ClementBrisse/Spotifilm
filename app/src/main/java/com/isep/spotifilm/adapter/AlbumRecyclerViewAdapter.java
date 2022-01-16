@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
@@ -150,8 +149,6 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
         @Override
         public void onItemClick(View view, int position) {
-            //TODO
-            Toast.makeText(MyApplication.getContext(), "TODO : on click track "+ adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,9 +1,11 @@
 package com.isep.spotifilm.object;
 
+import android.content.res.Resources;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.isep.spotifilm.MyApplication;
+import com.isep.spotifilm.R;
 import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
@@ -33,9 +35,7 @@ public class Album {
 
         //init all music from album to the status "not in the playlist"
         ReqService reqService = new ReqService(MyApplication.getContext());
-        reqService.getTracksFromAlbum(this, () -> {
-            tracks = reqService.getSongs();
-        });
+        reqService.getTracksFromAlbum(this, () -> tracks = reqService.getSongs());
         reqService.getAlbumIgmCover(id, () -> {
             imgURL = reqService.getImgURL();
             displaySearchInfos();
@@ -49,8 +49,9 @@ public class Album {
     }
     private void displaySearchInfos(){
         if(tvSearch!=null){
-            StringBuilder sb1 = new StringBuilder().append(name).append("\n").append(artists).append("\n").append(getNumberOfTracks()).append(" tracks");
-            tvSearch.setText(sb1.toString());
+            Resources res = MyApplication.getContext().getResources();
+            String text = res.getString(R.string.search_info, name, artists, getNumberOfTracks());
+            tvSearch.setText(text);
             Utils.setImgViewFromURL(ivSearch, imgURL);
         }
     }

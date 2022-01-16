@@ -24,7 +24,6 @@ import com.isep.spotifilm.R;
 import com.isep.spotifilm.adapter.PlaylistViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Playlist;
-import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 
@@ -40,9 +39,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
     FloatingActionButton fabAdd;
     FloatingActionButton fabPlay;
     FloatingActionButton fabEdit;
-    private Song song;
     private ReqService reqService;
-    private ArrayList<Song> recentlyPlayedTracks = new ArrayList<>();
     private ArrayList<Playlist> userPlaylist = new ArrayList<>();
 
     @Override
@@ -105,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
             }
             if (userPlaylistCount == 0) {
                 TextView tvNoPlaylist = findViewById(R.id.noPlaylist);
-                tvNoPlaylist.setText("No Spotifilm playlist. Create one withe the (+) button ");
+                tvNoPlaylist.setText(R.string.no_playlist);
             }
         });
     }
@@ -117,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
                     EditText etName = ((AlertDialog) dialog).findViewById(R.id.etInputPlaylistName);
                     EditText etDescription = ((AlertDialog) dialog).findViewById(R.id.etInputPlaylistDescription);
 
+                    assert etDescription != null;
+                    assert etName != null;
                     addPlaylist(etName.getText().toString(), etDescription.getText().toString());
                 })
                 .setNegativeButton("Annuler", (dialog, which) -> {

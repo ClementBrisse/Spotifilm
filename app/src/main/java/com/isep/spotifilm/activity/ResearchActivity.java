@@ -79,16 +79,16 @@ public class ResearchActivity extends AppCompatActivity {
 
     private void performSearch(){
         reqService.getSearch(String.valueOf(editTxt.getText()), ()->{
-            ArrayList<Album> albums = reqService.getAlbums();
-            if(albums.size()==0)
+            albumList = reqService.getAlbums();
+            if(albumList.size()==0)
                 return;
-            albums.get(0).updateSearchInfos(tvInfo1, imgProp1);
-            if(albums.size()==1)
+            albumList.get(0).updateSearchInfos(tvInfo1, imgProp1);
+            if(albumList.size()==1)
                 return;
-            albums.get(1).updateSearchInfos(tvInfo2, imgProp2);
-            if(albums.size()==2)
+            albumList.get(1).updateSearchInfos(tvInfo2, imgProp2);
+            if(albumList.size()==2)
                 return;
-            albums.get(2).updateSearchInfos(tvInfo3, imgProp3);
+            albumList.get(2).updateSearchInfos(tvInfo3, imgProp3);
         });
     }
 

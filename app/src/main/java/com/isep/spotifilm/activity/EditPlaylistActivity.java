@@ -97,7 +97,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AlbumRecy
             }
             if(albumsCount == 0){
                 TextView tvNoPlaylist = findViewById(R.id.noMusic);
-                tvNoPlaylist.setText("No music. Add an album with the (+) button ");
+                tvNoPlaylist.setText(R.string.no_music);
             }
         });
 

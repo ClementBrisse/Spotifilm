@@ -3,13 +3,11 @@ package com.isep.spotifilm.connectors;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Playlist;
@@ -25,15 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
     private final ArrayList<Playlist> playlists = new ArrayList<>();
     private ArrayList<Album> albums = new ArrayList<>();
     private Playlist createdPlaylist;
-    private SharedPreferences sharedPreferences;
-    private RequestQueue queue;
+    private final SharedPreferences sharedPreferences;
+    private final RequestQueue queue;
     private String availableDeviceId;
     private boolean isPlayerPlaying;
     private String imgURL = "";
@@ -51,13 +48,13 @@ public class ReqService {
         return availableDeviceId;
     }
 
-    public String getAvailableDevice(final IVolleyCallBack callBack) {
+    public void getAvailableDevice(final IVolleyCallBack callBack) {
         String endpoint = "https://api.spotify.com/v1/me/player/devices";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
-                    Gson gson = new Gson();
                     JSONArray jsonArray = response.optJSONArray("devices");
                     try {
+                        assert jsonArray != null;
                         JSONObject object = jsonArray.getJSONObject(0);
                         availableDeviceId = object.getString("id");
                     } catch (JSONException e) {
@@ -67,7 +64,7 @@ public class ReqService {
                     callBack.onSuccess();
                 }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders(){
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -76,7 +73,6 @@ public class ReqService {
             }
         };
         queue.add(jsonObjectRequest);
-        return availableDeviceId;
     }
 
     public ArrayList<Playlist> getPlaylists() {
@@ -88,7 +84,7 @@ public class ReqService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, response -> {
                     JSONArray jsonArray = response.optJSONArray("items");
-                    for (int n = 0; n < jsonArray.length(); n++) {
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
                             String playlistID = object.getString("name");
@@ -103,7 +99,7 @@ public class ReqService {
                     callBack.onSuccess();
                 }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -137,7 +133,7 @@ public class ReqService {
                     callBack.onSuccess();
                 }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -204,8 +200,9 @@ public class ReqService {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
                             JSONObject trackObj = object.optJSONObject("track");
-                            String trackId = trackObj.getString("id");
+                            String trackId = Objects.requireNonNull(trackObj).getString("id");
                             JSONObject albumObj = Objects.requireNonNull(trackObj).optJSONObject("album");
+                            assert albumObj != null;
                             String albumId = albumObj.getString("id");
                             Album album = getAlbumInListIfExist(albumId);
                             if (album == null) {
@@ -291,7 +288,7 @@ public class ReqService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, payload, response -> {
         }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -314,7 +311,7 @@ public class ReqService {
                     }
                 }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -331,7 +328,7 @@ public class ReqService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, "https://api.spotify.com/v1/me/player/pause?device_id=" + getDeviceId(), null, response -> {
         }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
@@ -457,8 +454,8 @@ public class ReqService {
         String endpoint = "https://api.spotify.com/v1/search?q="+search+"&type=album&limit=3";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest (Request.Method.GET, endpoint, null, response -> {
             JSONObject jsonObject = response.optJSONObject("albums");
-            JSONArray jsonArray = jsonObject.optJSONArray("items");
-                    for (int n = 0; n < jsonArray.length(); n++) {
+            JSONArray jsonArray = Objects.requireNonNull(jsonObject).optJSONArray("items");
+                    for (int n = 0; n < Objects.requireNonNull(jsonArray).length(); n++) {
                         try {
                             JSONObject object = jsonArray.getJSONObject(n);
                             List<String> albumArtists = Utils.getListOfItemFromJSONArray(object.getJSONArray("artists"), "name");

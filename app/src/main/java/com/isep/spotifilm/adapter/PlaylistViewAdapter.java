@@ -69,9 +69,7 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            notifyItemChanged(selectedPos);
             selectedPos = getLayoutPosition();
-            //notifyItemChanged(selectedPos);
         }
     }
 

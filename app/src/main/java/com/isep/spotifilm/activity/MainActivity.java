@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         //select playlist
         playlistIdSelected = userPlaylist.get(position).getId();
         playlistNameSelected = userPlaylist.get(position).getName();
-        Toast.makeText(this, "You selected " + userPlaylist.get(position).getName(), Toast.LENGTH_SHORT).show();
 
         //change color of clicked tv item
         String slectedColor = "#1DB954";

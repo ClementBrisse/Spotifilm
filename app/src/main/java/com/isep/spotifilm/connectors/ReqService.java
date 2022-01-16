@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ReqService {
     private ArrayList<Song> songs = new ArrayList<>();
@@ -509,7 +510,6 @@ public class ReqService {
         System.out.println(body);
     }
 
-
     public void getSearch(String search, final IVolleyCallBack callBack) {
         albums = new ArrayList<>();
         String endpoint = "https://api.spotify.com/v1/search?q="+search+"&type=album&limit=3";
@@ -529,7 +529,7 @@ public class ReqService {
                     callBack.onSuccess();
                 }, this::handleError) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;

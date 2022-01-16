@@ -1,6 +1,10 @@
 package com.isep.spotifilm.object;
 
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.isep.spotifilm.MyApplication;
+import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.adapter.AlbumRecyclerViewAdapter;
 import com.isep.spotifilm.connectors.ReqService;
 
@@ -17,6 +21,8 @@ public class Album {
 
     boolean isSelected = true; //true if getNumberOfSelectedTracks >0
     private AlbumRecyclerViewAdapter.ViewHolder holder;
+    private TextView tvSearch;
+    private ImageView ivSearch;
 
     boolean expanded; //state of the item in the view
 
@@ -27,8 +33,26 @@ public class Album {
 
         //init all music from album to the status "not in the playlist"
         ReqService reqService = new ReqService(MyApplication.getContext());
-        reqService.getTracksFromAlbum(this, () -> tracks = reqService.getSongs());
-        reqService.getAlbumIgmCover(id, () -> imgURL = reqService.getImgURL());
+        reqService.getTracksFromAlbum(this, () -> {
+            tracks = reqService.getSongs();
+        });
+        reqService.getAlbumIgmCover(id, () -> {
+            imgURL = reqService.getImgURL();
+            displaySearchInfos();
+        });
+    }
+
+    public void updateSearchInfos(TextView tvInfo, ImageView imgProp){
+        tvSearch = tvInfo;
+        ivSearch = imgProp;
+        displaySearchInfos();
+    }
+    private void displaySearchInfos(){
+        if(tvSearch!=null){
+            StringBuilder sb1 = new StringBuilder().append(name).append("\n").append(artists).append("\n").append(getNumberOfTracks()).append(" tracks");
+            tvSearch.setText(sb1.toString());
+            Utils.setImgViewFromURL(ivSearch, imgURL);
+        }
     }
 
     public void checkSong(String songId){

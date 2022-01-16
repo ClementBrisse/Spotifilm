@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.isep.spotifilm.R;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
+import com.isep.spotifilm.object.Song;
 
 import java.util.ArrayList;
 
@@ -113,5 +115,32 @@ public class ResearchActivity extends AppCompatActivity {
         // create an action bar buttons based on res/menu/mymenu
         getMenuInflater().inflate(R.menu.mymenu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void addAlbum0ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(0).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
+    }
+
+    public void addAlbum1ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(1).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
+    }
+
+    public void addAlbum2ToPlaylist(View view) {
+        reqService.addTracksToPlaylist((ArrayList<Song>) albumList.get(2).getTracks(), playlistId, () -> {});
+        Intent myIntent = new Intent(ResearchActivity.this, EditPlaylistActivity.class);
+        myIntent.putExtra("playlistId", playlistId);
+        myIntent.putExtra("playlistName", playlistName);
+        myIntent.putExtra("playlistDescription", playlistDescription);
+        ResearchActivity.this.startActivity(myIntent);
     }
 }

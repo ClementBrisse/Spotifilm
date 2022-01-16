@@ -9,14 +9,12 @@
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Informations"
+        android:text="@string/informations"
         android:textSize="40dp"/>
 
     <TextView
         android:id="@+id/tvContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to Spotifilm.
-        \nThe app to easely create playlist based on your favorite movies musics.
-        \n Use the buttons to crete and edit yours playlists." />
+        android:text="@string/welcome_to_spotifilm_nthe_app_to_easely_create_playlist_based_on_your_favorite_movies_musics_n_use_the_buttons_to_crete_and_edit_yours_playlists" />
 </LinearLayout>

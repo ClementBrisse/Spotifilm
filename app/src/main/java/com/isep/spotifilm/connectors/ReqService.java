@@ -47,38 +47,6 @@ public class ReqService {
         return songs;
     }
 
-    public ArrayList<Song> getRecentlyPlayedTracks(final IVolleyCallBack callBack) {
-        songs = new ArrayList<>();
-        String endpoint = "https://api.spotify.com/v1/me/player/recently-played";
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, endpoint, null, response -> {
-                    Gson gson = new Gson();
-                    JSONArray jsonArray = response.optJSONArray("items");
-                    for (int n = 0; n < jsonArray.length(); n++) {
-                        try {
-                            JSONObject object = jsonArray.getJSONObject(n);
-                            object = object.optJSONObject("track");
-                            Song song = gson.fromJson(object.toString(), Song.class);
-                            songs.add(song);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    callBack.onSuccess();
-                }, this::handleError) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String token = sharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        queue.add(jsonObjectRequest);
-        return songs;
-    }
-
     public String getDeviceId() {
         return availableDeviceId;
     }
@@ -140,32 +108,6 @@ public class ReqService {
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
                 headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        queue.add(jsonObjectRequest);
-    }
-
-    public void putSongLiked(Song song) {
-        //preparePutPayload
-        JSONArray idarray = new JSONArray();
-        idarray.put(song.getId());
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("ids", idarray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, "https://api.spotify.com/v1/me/tracks", payload, response -> {
-        }, this::handleError) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String token = sharedPreferences.getString("token", "");
-                String auth = "Bearer " + token;
-                headers.put("Authorization", auth);
-                headers.put("Content-Type", "application/json");
                 return headers;
             }
         };

@@ -2,6 +2,7 @@ package com.isep.spotifilm.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
 
         reqService = new ReqService(getApplicationContext());
 
-        TextView userView = findViewById(R.id.user);
 
         fabAdd = findViewById(R.id.fabAdd);
         fabPlay = findViewById(R.id.fabPlay);
@@ -60,15 +60,10 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         initBtnListener();
 
         sharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
-        userView.setText(sharedPreferences.getString("userid", "No User"));
 
 
         recyclerView = findViewById(R.id.rvPlaylists);
         initUserPlaylist();
-
-        //change color of selected playlist
-        /*final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row, parent, false);
-        itemViewList.add(itemView); //to add all the 'list row item' views*/
 
         reqService.getAvailableDevice(() -> {
             deviceId = reqService.getDeviceId();
@@ -164,34 +159,27 @@ public class MainActivity extends AppCompatActivity implements PlaylistViewAdapt
         });
     }
 
-    private void getRecentlyPlayed() {
-        reqService.getRecentlyPlayedTracks(() -> {
-            recentlyPlayedTracks = reqService.getSongs();
-            if (recentlyPlayedTracks.size() > 0) {
-                song = recentlyPlayedTracks.get(0);
-            }
-        });
-    }
-
-    private void putSongLiked() {
-        reqService.putSongLiked(this.song);
-        if (recentlyPlayedTracks.size() > 0) {
-            recentlyPlayedTracks.remove(0);
-        }
-    }
-
     @Override
     public void onItemClick(View view, int position) {
-        //TODO select playlist
+        //select playlist
         playlistIdSelected = userPlaylist.get(position).getId();
         playlistNameSelected = userPlaylist.get(position).getName();
         Toast.makeText(this, "You selected " + userPlaylist.get(position).getName(), Toast.LENGTH_SHORT).show();
 
-        //TODO change color of clicked tv item
+        //change color of clicked tv item
         String slectedColor = "#1DB954";
-        String defaultColor = "#FFFFFF";
+        String defaultColorBlack = "#000000";
+        String defaultColorWhite = "#FFFFFF";
         for (int i = 0; i < recyclerView.getChildCount(); i++) {
-            recyclerView.getChildAt(i).setBackgroundColor(Color.parseColor(defaultColor));
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    recyclerView.getChildAt(i).setBackgroundColor(Color.parseColor(defaultColorBlack));
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    recyclerView.getChildAt(i).setBackgroundColor(Color.parseColor(defaultColorWhite));
+                    break;
+            }
+
         }
         recyclerView.getChildAt(position).setBackgroundColor(Color.parseColor(slectedColor));
     }

@@ -2,7 +2,6 @@ package com.isep.spotifilm;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -44,7 +43,7 @@ public class Utils {
         /**
          * Override this method to perform a computation on a background thread.
          * @param urls Params... params
-         * @return
+         * @return bitmap
          */
         protected Bitmap doInBackground(String...urls){
             String urlOfImage = urls[0];

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.isep.spotifilm.R;
-import com.isep.spotifilm.Utils;
 import com.isep.spotifilm.connectors.ReqService;
 import com.isep.spotifilm.object.Album;
 import com.isep.spotifilm.object.Song;
@@ -82,16 +80,15 @@ public class ResearchActivity extends AppCompatActivity {
     private void performSearch(){
         reqService.getSearch(String.valueOf(editTxt.getText()), ()->{
             albumList = reqService.getAlbums();
-            StringBuilder sb1, sb2, sb3;
-            sb1 = new StringBuilder().append(albumList.get(0).getName()).append("\n").append(albumList.get(0).getArtists()).append("\n").append(albumList.get(0).getNumberOfTracks()).append(" tracks");
-            tvInfo1.setText(sb1.toString());
-            Utils.setImgViewFromURL(imgProp1, albumList.get(0).getImgURL());
-            sb2 = new StringBuilder().append(albumList.get(1).getName()).append("\n").append(albumList.get(1).getArtists()).append("\n").append(albumList.get(1).getNumberOfTracks()).append(" tracks");
-            tvInfo2.setText(sb2.toString());
-            Utils.setImgViewFromURL(imgProp2, albumList.get(1).getImgURL());
-            sb3 = new StringBuilder().append(albumList.get(2).getName()).append("\n").append(albumList.get(2).getArtists()).append("\n").append(albumList.get(2).getNumberOfTracks()).append(" tracks");
-            tvInfo3.setText(sb3.toString());
-            Utils.setImgViewFromURL(imgProp3, albumList.get(2).getImgURL());
+            if(albumList.size()==0)
+                return;
+            albumList.get(0).updateSearchInfos(tvInfo1, imgProp1);
+            if(albumList.size()==1)
+                return;
+            albumList.get(1).updateSearchInfos(tvInfo2, imgProp2);
+            if(albumList.size()==2)
+                return;
+            albumList.get(2).updateSearchInfos(tvInfo3, imgProp3);
         });
     }
 

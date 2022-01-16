@@ -167,8 +167,8 @@ public class ReqService {
                             if (album == null) {
                                 album = new Album(albumId, albumName, albumArtists);
                                 albums.add(album);
+                                checkSelectedSongInAlbum(playlistId);
                             }
-                            checkSelectedSongInAlbum(playlistId);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

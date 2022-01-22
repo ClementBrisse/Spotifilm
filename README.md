@@ -1,4 +1,4 @@
 # Spotifilm
-Spotify playlists creation from film music
+Spotify playlists creation with albums selection of film music
 
 Authors : Elise GABILLY & Clément BRISSE
